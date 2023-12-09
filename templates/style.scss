@@ -1,0 +1,15 @@
+$primary-color: #2148c0;
+$secondary-color: #264ec9;
+$accent-color: #234bc5;
+$background-color: #274ec7;
+$button-background: #ffffff;
+$button-shadow-color: #0000004c;
+$text-color: #ffffff;
+
+.dashboard-login {
+  background-color: $background-color;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
