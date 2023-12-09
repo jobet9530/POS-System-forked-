@@ -37,8 +37,10 @@ class Sale(db.Model):
         sale_id = db.Column(db.Integer, primary_key=True)
         customer_id = db.Column(
             db.Integer, db.ForeignKey('customer.customer_id'))
+        product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
         sale_date = db.Column(
             db.TIMESTAMP, server_default=db.func.current_timestamp())
+        quantity = db.Column(db.Integer, nullable=False)
         total_amount = db.Column(db.Float, nullable=False)
         payment_method = db.Column(db.Text)
         notes = db.Column(db.Text)
