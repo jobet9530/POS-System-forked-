@@ -21,6 +21,7 @@ class TestProductResource(unittest.TestCase):
                              '/product/<int:product_id>')
         cls.client = cls.app.test_client()
 
+    @classmethod
     def tearDown(self):
         with self.app.app_context():
             self.db.session.remove()
@@ -101,7 +102,8 @@ class TestProductResource(unittest.TestCase):
                 "Expected JSON response but received content type: {}".format(response.content_type))
 
     def test_post_product_not_found(self, product_id):
-        product = Product.query.get(product_id)
+        # product = Product.query.get(product_id)
+        self.test_post_product_not_found(product_id=123)
 
         response = self.client.put(
             '/product/2', json={'product_name': 'Updated Product No'})
@@ -149,3 +151,5 @@ class TestProductResource(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+    test_client.test_post_product_not_found(product_id=123)
