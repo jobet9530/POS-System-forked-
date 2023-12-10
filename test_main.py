@@ -6,21 +6,22 @@ from main import ProductResource, Product
 
 
 class TestProductResource(unittest.TestCase):
+    @classmethod
     def setUp(self):
         self.app = Flask(__name__)
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        self.api = Api(self.app)
-        self.db = SQLAlchemy(self.app)
-        self.db.init_app(self.app)
+
+        if not hasattr(self.app, 'db'):
+            self.db = SQLAlchemy(self.app)
+            self.db.init_app(self.app)
 
         with self.app.app_context():
             self.db.create_all()
 
+        self.api = Api(self.app)
         self.api.add_resource(ProductResource, '/product',
                               '/product/<int:product_id>')
-
-        # Create a test client
         self.client = self.app.test_client()
 
     def tearDown(self):
