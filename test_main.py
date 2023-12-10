@@ -89,7 +89,8 @@ class TestProductResource(unittest.TestCase):
     def test_put_product_not_found(self):
         response = self.client.put(
             '/product/1', json={'product_name': 'Updated Product'})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 404,
+                         f"Expected 404, but got {response.status_code}")
 
         if response.content_type == 'application/json':
             expected_data = {'message': 'Product not found'}
