@@ -154,7 +154,8 @@ class SaleItemResource(Resource):
             return jsonify(sale_item_list)
 
 
-api.add(SaleItemResource, '/sale_item', '/sale_item/<int:sale_item_id>')
+api.add_resource(SaleItemResource, '/sale_item',
+                 '/sale_item/<int:sale_item_id>')
 
 
 class UserResource(Resource):
@@ -182,7 +183,7 @@ class UserResource(Resource):
         return jsonify({'message': 'User created successfully'})
 
 
-api.add(UserResource, '/user', '/user/<int:user_id>')
+api.add_resource(UserResource, '/user', '/user/<int:user_id>')
 
 
 class OrderResource(Resource):
@@ -213,7 +214,7 @@ class OrderResource(Resource):
             return jsonify(order_list)
 
 
-api.add(OrderResource, '/order', '/order/<int:order_id>')
+api.add_resource(OrderResource, '/order', '/order/<int:order_id>')
 
 
 class OrderItemResource(Resource):
@@ -244,7 +245,8 @@ class OrderItemResource(Resource):
             return jsonify(order_item_list)
 
 
-api.add(OrderItemResource, '/order_item', '/order_item/<int:order_item_id>')
+api.add_resource(OrderItemResource, '/order_item',
+                 '/order_item/<int:order_item_id>')
 
 
 @app.route('/api/data')
