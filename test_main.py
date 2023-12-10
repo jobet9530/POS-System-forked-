@@ -93,7 +93,8 @@ class TestProductResource(unittest.TestCase):
         response = self.client.put(
             f'/product/{product_id}', json={'product_name': 'Updated Product'})
         print(response.data.decode('utf-8'))
-        print(response.get_json())
+        if response.status_code == 500:
+            print(response.get_json())
 
         self.assertEqual(response.status_code, 404)
         expected_data = {'message': 'Product not found'}
@@ -106,6 +107,8 @@ class TestProductResource(unittest.TestCase):
         # else:
         # self.fail(
         # "Expected JSON response but received content type: {}".format(response.content_type))
+    def test_product_method(self):
+        self.test_put_product_not_found(product_id=123)
 
     def test_post_product_not_found(self, product_id):
         # product = Product.query.get(product_id)
