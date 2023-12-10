@@ -91,10 +91,10 @@ class TestProductResource(unittest.TestCase):
             '/product/1', json={'product_name': 'Updated Product'})
         self.assertEqual(response.status_code, 404)
 
-        # Check if the response is a JSON
         if response.content_type == 'application/json':
             expected_data = {'message': 'Product not found'}
             actual_data = response.get_json()
+            self.assertEqual(response.status_code, 404)
             self.assertEqual(actual_data, expected_data)
         else:
             self.fail("Expected JSON response but received content type: {}".format(
