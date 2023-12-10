@@ -91,7 +91,7 @@ class TestProductResource(unittest.TestCase):
 
     def test_put_product_not_found(self, product_id=2):
         response = self.client.put(
-            f'/product/{product_id}', json={'product_name': 'Updated Product'}, follow_redirects=True)
+            f'/product/{product_id}', json={'product_name': 'Updated Product'})
         print(response.data.decode('utf-8'))
         self.assertEqual(response.status_code, 404)
         expected_data = {'message': 'Product not found'}
