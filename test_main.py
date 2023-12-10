@@ -7,19 +7,19 @@ from main import ProductResource, Product
 
 class TestProductResource(unittest.TestCase):
     @classmethod
-    def setUp(self):
-        self.app = Flask(__name__)
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
-        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-        self.db = SQLAlchemy(self.app)
+    def setUpClass(cls):
+        cls.app = Flask(__name__)
+        cls.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
+        cls.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        cls.db = SQLAlchemy(cls.app)
 
-        with self.app.app_context():
-            self.db.create_all()
+        with cls.app.app_context():
+            cls.db.create_all()
 
-        self.api = Api(self.app)
-        self.api.add_resource(ProductResource, '/product',
-                              '/product/<int:product_id>')
-        self.client = self.app.test_client()
+        cls.api = Api(cls.app)
+        cls.api.add_resource(ProductResource, '/product',
+                             '/product/<int:product_id>')
+        cls.client = cls.app.test_client()
 
     def tearDown(self):
         with self.app.app_context():
@@ -91,11 +91,11 @@ class TestProductResource(unittest.TestCase):
             '/product/1', json={'product_name': 'Updated Product'})
         self.assertEqual(response.status_code, 404)
 
-        if response.status_code == 'application/json':
+        # Check if the response is a JSON
+        if response.content_type == 'application/json':
             expected_data = {'message': 'Product not found'}
             actual_data = response.get_json()
             self.assertEqual(actual_data, expected_data)
-
         else:
             self.fail("Expected JSON response but received content type: {}".format(
                 response.content_type))
