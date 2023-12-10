@@ -93,8 +93,10 @@ class TestProductResource(unittest.TestCase):
         response = self.client.put(
             f'/product/{product_id}', json={'product_name': 'Updated Product'})
         print(response.data.decode('utf-8'))
-        if response == 500:
+
+        if response.status_code == 500:
             print(response.get_json())
+
         self.assertEqual(response.status_code, 404)
         expected_data = {'message': 'Product not found'}
         self.assertEqual(response.get_json(), expected_data)
