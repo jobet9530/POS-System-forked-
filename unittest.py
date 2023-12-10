@@ -2,7 +2,7 @@ import unittest
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
-from main import ProductResource, SaleResource, SaleItemResource, UserResource, OrderResource, OrderItemResource, Product
+from main import ProductResource, Product
 
 
 class TestProductResource(unittest.TestCase):
