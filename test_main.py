@@ -97,6 +97,7 @@ class TestProductResource(unittest.TestCase):
             self.assertEqual(response.status_code, 404)
             self.assertEqual(actual_data, expected_data)
         else:
+            self.assertEqual(response.status_code, 404)
             self.fail("Expected JSON response but received content type: {}".format(
                 response.content_type))
 
