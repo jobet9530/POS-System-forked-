@@ -92,21 +92,23 @@ class TestProductResource(unittest.TestCase):
         response = self.client.put(
             '/product/1', json={'product_name': 'Updated Product'})
         self.assertEqual(response.status_code, 404)
+        expected_data = {'message': 'Product not found'}
+        self.assertEqual(response.get_json(), expected_data)
 
-        print(response.data.decode('utf-8'))
+        # print(response.data.decode('utf-8'))
 
-        self.assertEqual(response.status_code, 404,
-                         f"Expected 404, but got {response.status_code}")
+        # self.assertEqual(response.status_code, 404,
+        # f"Expected 404, but got {response.status_code}")
 
-        if response.content_type == 'application/json':
-            expected_data = {'message': 'Product not found'}
-            actual_data = response.get_json()
-            self.assertEqual(response.status_code, 404)
-            self.assertEqual(actual_data, expected_data)
-        else:
-            self.assertEqual(response.status_code, 404)
-            self.fail("Expected JSON response but received content type: {}".format(
-                response.content_type))
+        # if response.content_type == 'application/json':
+        # expected_data = {'message': 'Product not found'}
+        # actual_data = response.get_json()
+        # self.assertEqual(response.status_code, 404)
+        # self.assertEqual(actual_data, expected_data)
+        # else:
+        # self.assertEqual(response.status_code, 404)
+        # self.fail("Expected JSON response but received content type: {}".format(
+        # response.content_type))
 
     def test_delete_product(self):
         with self.app.app_context():
