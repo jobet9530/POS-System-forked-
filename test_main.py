@@ -100,10 +100,11 @@ class TestProductResource(unittest.TestCase):
             self.db.session.commit()
 
         response = self.client.put(
-            '/product/1', json={'product_name': 'Updated Product'})
+            f'/product/{product_id}', json={'product_name': 'Updated Product'})
         self.assertEqual(response.status_code, 404)
         expected_data = {'message': 'Product not found'}
         self.assertEqual(response.get_json(), expected_data)
+        self.test_put_product_not_found(product_id=1)
 
         # print(response.data.decode('utf-8'))
 
