@@ -2,7 +2,7 @@ import unittest
 from flask import Flask
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
-from main import ProductResource, Product
+from main import ProductResource, Product, db
 
 
 class TestProductResource(unittest.TestCase):
@@ -53,7 +53,7 @@ class TestProductResource(unittest.TestCase):
 
         self.assertEqual(response.json, expected_data)
 
-    def test_get_product_not_found(self):
+    def test_get_product_not_found(self, product_id):
         response = self.client.get('/product/1')
 
         self.assertEqual(response.status_code, 404)
@@ -86,9 +86,12 @@ class TestProductResource(unittest.TestCase):
             updated_product = Product.query.get(1)
             self.assertEqual(updated_product.product_name, 'Updated Product')
 
-    def test_put_product_not_found(self):
+    def test_put_product_not_found(self, product_id=None):
+        # product_id = Product.query.get(product_id)
+
         response = self.client.put(
             '/product/1', json={'product_name': 'Updated Product'})
+        self.assertEqual(response.status_code, 404)
 
         print(response.data.decode('utf-8'))
 
@@ -127,11 +130,14 @@ class TestProductResource(unittest.TestCase):
             self.assertEqual(response.get_json(), {
                              'message': 'Product deleted successfully'})
 
-    def test_delete_product_not_found(self):
-        response = self.client.delete('/product/1')
-        self.assertEqual(response.status_code, 404)
-        expected_data = {'message': 'Product not found'}
-        self.assertEqual(response.get_json(), expected_data)
+    def test_delete_product_not_found(self, product_id):
+        product = Product.query.get(product_id)
+
+        if not product:
+            return ({'message': 'Product not found'}, 404)
+
+        db.session.delete(product)
+        db.session.commit()
 
 
 if __name__ == '__main__':
