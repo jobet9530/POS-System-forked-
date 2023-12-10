@@ -100,7 +100,9 @@ class TestProductResource(unittest.TestCase):
             self.fail(
                 "Expected JSON response but received content type: {}".format(response.content_type))
 
-    def test_post_product_not_found(self):
+    def test_post_product_not_found(self, product_id):
+        product = Product.query.get(product_id)
+
         response = self.client.put(
             '/product/2', json={'product_name': 'Updated Product No'})
         self.assertEqual(response.status_code, 404)
