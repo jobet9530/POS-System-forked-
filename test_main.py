@@ -20,12 +20,14 @@ class TestProductResource(unittest.TestCase):
         cls.api.add_resource(ProductResource, '/product',
                              '/product/<int:product_id>')
         cls.client = cls.app.test_client()
+        pass
 
     @classmethod
     def tearDown(self):
         with self.app.app_context():
             self.db.session.remove()
             self.db.drop_all()
+        pass
 
     def test_get_product(self):
         with self.app.app_context():
