@@ -86,18 +86,7 @@ class TestProductResource(unittest.TestCase):
             updated_product = Product.query.get(1)
             self.assertEqual(updated_product.product_name, 'Updated Product')
 
-    def test_put_product_not_found(self, product_id=2):
-        # product_id = Product.query.get(product_id)
-        with self.app.app_context():
-            product = Product(
-                product_name='Test Product',
-                price=10.99,
-                stock_quantity=100,
-                barcode='123456789012',
-                category='Test Category'
-            )
-            self.db.session.add(product)
-            self.db.session.commit()
+    def test_put_product_not_found(self, product_id):
 
         response = self.client.put(
             f'/product/{product_id}', json={'product_name': 'Updated Product'})
