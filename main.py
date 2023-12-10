@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, render_template, url_for
 from flask_restful import Api, Resource, reqparse
 from flask_sqlalchemy import SQLAlchemy
-from database import db, Product, Customer, Sale
+from database import db, Product, Customer, Sale, SaleItem
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
@@ -102,7 +102,6 @@ class SaleResource(Resource):
                     'customer_id': sale.customer_id,
                     'product_id': sale.product_id,
                     'sale_date': sale.sale_date,
-                    'quantity': sale.quantity,
                     'total_amount': sale.total_amount,
                     'payment_method': sale.payment_method,
                     'notes': sale.notes
@@ -116,7 +115,6 @@ class SaleResource(Resource):
                 'customer_id': s.customer_id,
                 'product_id': s.product_id,
                 'sale_date': s.sale_date,
-                'quantity': s.quantity,
                 'total_amount': s.total_amount,
                 'payment_method': s.payment_method,
                 'notes': s.notes
@@ -125,6 +123,37 @@ class SaleResource(Resource):
 
 
 api.add_resource(SaleResource, '/sale', '/sale/<int:sale_id>')
+
+
+class SaleItemResource(Resource):
+    def get(self, sale_item_id):
+        sale_item = SaleItem.query.get(sale_item_id)
+        if sale_item_id:
+            if sale_item:
+                return jsonify({
+                    'sale_item_id': sale_item.sale_item_id,
+                    'sale_id': sale_item.sale_id,
+                    'product_id': sale_item.product_id,
+                    'quantity': sale_item.quantity,
+                    'price': sale_item.price,
+                    'amount': sale_item.amount
+                })
+            else:
+                return jsonify({'message': 'Sale item not found'}), 404
+        else:
+            sale_items = SaleItem.query.all()
+            sale_item_list = [{
+                'sale_item_id': s.sale_item_id,
+                'sale_id': s.sale_id,
+                'product_id': s.product_id,
+                'quantity': s.quantity,
+                'price': s.price,
+                'amount': s.amount
+            }for s in sale_items]
+            return jsonify(sale_item_list)
+
+
+api.add(SaleItemResource, '/sale_item', '/sale_item/<int:sale_item_id>')
 
 
 @app.route('/api/data')
