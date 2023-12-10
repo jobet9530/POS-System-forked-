@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template, url_for
 from flask_restful import Api, Resource, reqparse
 from werkzeug.security import generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from database import db, Product, Customer, Sale, SaleItem, User
+from database import db, Product, Customer, Sale, SaleItem, User, Order
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
@@ -183,6 +183,37 @@ class UserResource(Resource):
 
 
 api.add(UserResource, '/user', '/user/<int:user_id>')
+
+
+class OrderResource(Resource):
+    def get(self, order_id=None):
+        if order_id:
+            order = Order.query.get(order_id)
+            if order:
+                return jsonify({
+                    'order_id': order.order_id,
+                    'customer_id': order.customer_id,
+                    'order_date': order.order_date,
+                    'total_amount': order.total_amount,
+                    'payment_method': order.payment_method,
+                    'notes': order.notes
+                })
+            else:
+                return jsonify({'message': 'Order not found'}), 404
+        else:
+            orders = Order.query.all()
+            order_list = [{
+                'order_id': o.order_id,
+                'customer_id': o.customer_id,
+                'order_date': o.order_date,
+                'total_amount': o.total_amount,
+                'payment_method': o.payment_method,
+                'notes': o.notes
+            }for o in orders]
+            return jsonify(order_list)
+
+
+api.add(OrderResource, '/order', '/order/<int:order_id>')
 
 
 @app.route('/api/data')
