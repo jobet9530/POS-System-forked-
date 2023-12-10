@@ -11,10 +11,7 @@ class TestProductResource(unittest.TestCase):
         self.app = Flask(__name__)
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-        if not hasattr(self.app, 'db'):
-            self.db = SQLAlchemy(self.app)
-            self.db.init_app(self.app)
+        self.db = SQLAlchemy(self.app)
 
         with self.app.app_context():
             self.db.create_all()
