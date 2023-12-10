@@ -89,7 +89,7 @@ class TestProductResource(unittest.TestCase):
             updated_product = Product.query.get(1)
             self.assertEqual(updated_product.product_name, 'Updated Product')
 
-    def test_put_product_not_found(self, product_id=1):
+    def test_put_product_not_found(self, product_id):
         response = self.client.put(
             f'/product/{product_id}', json={'product_name': 'Updated Product'})
         print(response.data.decode('utf-8'))
