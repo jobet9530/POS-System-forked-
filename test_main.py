@@ -87,28 +87,31 @@ class TestProductResource(unittest.TestCase):
             self.assertEqual(updated_product.product_name, 'Updated Product')
 
     def test_put_product_not_found(self, product_id):
-
         response = self.client.put(
             f'/product/{product_id}', json={'product_name': 'Updated Product'})
+
         self.assertEqual(response.status_code, 404)
-        expected_data = {'message': 'Product not found'}
-        self.assertEqual(response.get_json(), expected_data)
-        self.test_put_product_not_found(product_id=1)
 
-        # print(response.data.decode('utf-8'))
+        if response == 404:
+            expected_data = {'message': 'Product not found'}
+            actual_data = response.get_json()
+            self.assertEqual(actual_data, expected_data)
+        else:
+            self.fail(
+                "Expected JSON response but received content type: {}".format(response.content_type))
 
-        # self.assertEqual(response.status_code, 404,
-        # f"Expected 404, but got {response.status_code}")
+    def test_post_product_not_found(self, product_id):
+        response = self.client.put(
+            '/product/2', json={'product_name': 'Updated Product No'})
+        self.assertEqual(response.status_code, 404)
 
-        # if response.content_type == 'application/json':
-        # expected_data = {'message': 'Product not found'}
-        # actual_data = response.get_json()
-        # self.assertEqual(response.status_code, 404)
-        # self.assertEqual(actual_data, expected_data)
-        # else:
-        # self.assertEqual(response.status_code, 404)
-        # self.fail("Expected JSON response but received content type: {}".format(
-        # response.content_type))
+        if response == 404:
+            expected_data = {'message': 'Product not found'}
+            actual_data = response.get_json()
+            self.assertEqual(actual_data, expected_data)
+        else:
+            self.fail(
+                "Expected JSON response but received content type: {}".format(response.content_type))
 
     def test_delete_product(self):
         with self.app.app_context():
