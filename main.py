@@ -12,7 +12,7 @@ db.init_app(app)
 
 
 class ProductResource(Resource):
-    def get(self, product_id=None):
+    def get(self, product_id):
         if product_id:
             product = Product.query.get(product_id)
             if product:
