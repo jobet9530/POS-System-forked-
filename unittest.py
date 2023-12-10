@@ -20,6 +20,9 @@ class TestProductResource(unittest.TestCase):
         self.api.add_resource(ProductResource, '/product',
                               '/product/<int:product_id>')
 
+        # Create a test client
+        self.client = self.app.test_client()
+
     def tearDown(self):
         with self.app.app_context():
             self.db.session.remove()
@@ -37,26 +40,22 @@ class TestProductResource(unittest.TestCase):
             self.db.session.add(product)
             self.db.session.commit()
 
-            with self.app.app_context():
-                self.db.create_all()
+        response = self.client.get('/product/1')
 
-            response = self.client.get('/product/1')
+        self.assertEqual(response.status_code, 200)
 
-            self.assertEqual(response.status_code, 200)
+        expected_data = {
+            'product_id': 1,
+            'product_name': 'Test Product',
+            'price': 10.99,
+            'stock_quantity': 100,
+            'barcode': '123456789012',
+            'category': 'Test Category'
+        }
 
-            expected_data = {
-                'product_id': 1,
-                'product_name': 'TestProduct',
-                'price': 10.99,
-                'stock_quantity': 50,
-                'barcode': '123456789',
-                'category': 'TestCategory'
-            }
-
-            self.assertEqual(response.json, expected_data)
+        self.assertEqual(response.json, expected_data)
 
     def test_get_product_not_found(self):
-
         response = self.client.get('/product/1')
 
         self.assertEqual(response.status_code, 404)
@@ -75,29 +74,23 @@ class TestProductResource(unittest.TestCase):
             self.db.session.add(product)
             self.db.session.commit()
 
-            with self.app.app_context():
-                self.db.create_all()
+        response = self.client.put('/product/1', json={
+            'product_name': 'Updated Product',
+            'price': 20.99,
+            'stock_quantity': 200,
+            'barcode': '987654321098',
+            'category': 'Updated Category'
+        })
 
-            response = self.client.put('/product/1', json={
-                'product_name': 'Updated Product',
-                'price': 20.99,
-                'stock_quantity': 200,
-                'barcode': '987654321098',
-                'category': 'Updated Category'
-            })
+        self.assertEqual(response.status_code, 200)
 
-            response = self.client.put(
-                '/product/1', json={'product_name': 'UpdatedProduct'})
-            self.assertEqual(response.status_code, 200)
+        with self.app.app_context():
+            updated_product = Product.query.get(1)
+            self.assertEqual(updated_product.product_name, 'Updated Product')
 
-            with self.app.app_context():
-                updated_product = Product.query.get(1)
-                self.assertEqual(updated_product.product_name,
-                                 'UpdatedProduct')
-
-    def test_get_product_not_found(self):
+    def test_put_product_not_found(self):
         response = self.client.put(
-            '/product/1', json={'product_name': 'UpdatedProduct'})
+            '/product/1', json={'product_name': 'Updated Product'})
         self.assertEqual(response.status_code, 404)
         expected_data = {'message': 'Product not found'}
         self.assertEqual(response.get_json(), expected_data)
@@ -114,12 +107,9 @@ class TestProductResource(unittest.TestCase):
             self.db.session.add(product)
             self.db.session.commit()
 
-            with self.app.app_context():
-                self.db.create_all()
+        response = self.client.delete('/product/1')
 
-            response = self.client.delete('/product/1')
-
-            self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
         with self.app.app_context():
             deleted_product = Product.query.get(1)
