@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, render_template, url_for
 from flask_restful import Api, Resource, reqparse
+from werkzeug.security import generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from database import db, Product, Customer, Sale, SaleItem
+from database import db, Product, Customer, Sale, SaleItem, User
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
@@ -154,6 +155,34 @@ class SaleItemResource(Resource):
 
 
 api.add(SaleItemResource, '/sale_item', '/sale_item/<int:sale_item_id>')
+
+
+class UserResource(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', type=str,
+                            required=True, help='Username is required')
+        parser.add_argument('password', type=str,
+                            required=True, help='Password is required')
+
+        args = parser.parse_args()
+        username = args['username']
+        password = args['password']
+
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return jsonify({'message': 'User already exists'}), 400
+
+        hashed_password = generate_password_hash(password, method='sha256')
+
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({'message': 'User created successfully'})
+
+
+api.add(UserResource, '/user', '/user/<int:user_id>')
 
 
 @app.route('/api/data')
