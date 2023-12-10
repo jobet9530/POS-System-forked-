@@ -86,7 +86,7 @@ class TestProductResource(unittest.TestCase):
             updated_product = Product.query.get(1)
             self.assertEqual(updated_product.product_name, 'Updated Product')
 
-    def test_put_product_not_found(self, product_id):
+    def test_put_product_not_found(self, product_id=2):
         # product_id = Product.query.get(product_id)
         with self.app.app_context():
             product = Product(
