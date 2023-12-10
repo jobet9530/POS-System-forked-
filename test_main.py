@@ -107,7 +107,7 @@ class TestProductResource(unittest.TestCase):
         # else:
         # self.fail(
         # "Expected JSON response but received content type: {}".format(response.content_type))
-    def test_product_method(self):
+    def test_product_method(self, product_id):
         self.test_put_product_not_found(product_id=123)
 
     def test_post_product_not_found(self, product_id):
