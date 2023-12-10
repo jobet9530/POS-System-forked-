@@ -88,6 +88,16 @@ class TestProductResource(unittest.TestCase):
 
     def test_put_product_not_found(self, product_id):
         # product_id = Product.query.get(product_id)
+        with self.app.app_context():
+            product = Product(
+                product_name='Test Product',
+                price=10.99,
+                stock_quantity=100,
+                barcode='123456789012',
+                category='Test Category'
+            )
+            self.db.session.add(product)
+            self.db.session.commit()
 
         response = self.client.put(
             '/product/1', json={'product_name': 'Updated Product'})
