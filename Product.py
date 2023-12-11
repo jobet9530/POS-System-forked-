@@ -31,21 +31,21 @@ class ProductResource(Resource):
             } for p in products]
             return jsonify(product_list)
 
-  def get(self, product_id):
-    if product_id:
-      product = Product.query.get(product_id)
-      if product:
-        return jsonify({
+    def get(self, product_id):
+      if product_id:
+        product = Product.query.get(product_id)
+        if product:
+          return jsonify({
             'product_id': product.product_id,
             'product_name': product.product_name,
             'price': product.price,
             'stock_quantity': product.stock_quantity,
             'barcode': product.barcode,
             'category': product.category
-        })
-      else:
+          })
+        else:
         return jsonify({'message': 'Product not found'}), 404
-    else:
+      else:
       products = Product.query.all()
       product_list = [{
           'product_id': p.product_id,

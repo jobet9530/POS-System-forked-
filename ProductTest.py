@@ -3,7 +3,6 @@ from flask import Flask
 from flask_restful import Api
 from flask_testing import TestCase
 from main import ProductResource, db
-from Product import ProductResource
 
 
 class ProductTest(TestCase):
@@ -40,7 +39,7 @@ class ProductTest(TestCase):
         }
 
         response = client.get('/product', json=product_data)
-        self.assertionEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200)  # Fix the typo here
 
         product_id = response.json['product_id']
 
