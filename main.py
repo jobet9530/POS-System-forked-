@@ -14,7 +14,6 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 api = Api(app)
 db.init_app(app)
 
-
 product_resource_instance = ProductResource()
 api.add_resource(ProductResource, '/product', '/product/<int:product_id>')
 
@@ -27,36 +26,6 @@ api.add_resource(SaleResource, '/sale', '/sale/<int:sale_id>')
 sale_item_resource_instance = SaleItemResource()
 api.add_resource(SaleItemResource, '/sale_item',
                  '/sale_item/<int:sale_item_id>')
-
-
-class UserResource(Resource):
-
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('username',
-                            type=str,
-                            required=True,
-                            help='Username is required')
-        parser.add_argument('password',
-                            type=str,
-                            required=True,
-                            help='Password is required')
-
-        args = parser.parse_args()
-        username = args['username']
-        password = args['password']
-
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            return jsonify({'message': 'User already exists'}), 400
-
-        hashed_password = generate_password_hash(password, method='sha256')
-
-        new_user = User(username=username, password=hashed_password)
-        db.session.add(new_user)
-        db.session.commit()
-
-        return jsonify({'message': 'User created successfully'})
 
 
 api.add_resource(UserResource, '/user', '/user/<int:user_id>')
