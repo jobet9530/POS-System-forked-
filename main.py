@@ -7,6 +7,7 @@ from product_resource import ProductResource
 from customer_resource import CustomerResource
 from sale_resource import SaleResource
 from sale_item_resource import SaleItemResource
+from user_resource import UserResource
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
@@ -27,7 +28,7 @@ sale_item_resource_instance = SaleItemResource()
 api.add_resource(SaleItemResource, '/sale_item',
                  '/sale_item/<int:sale_item_id>')
 
-
+user_resource_instance = UserResource()
 api.add_resource(UserResource, '/user', '/user/<int:user_id>')
 
 
