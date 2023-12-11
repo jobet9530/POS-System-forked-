@@ -9,6 +9,7 @@ from sale_resource import SaleResource
 from sale_item_resource import SaleItemResource
 from user_resource import UserResource
 from order_resource import OrderResource
+from order_item_resource import OrderItemResource
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
@@ -37,35 +38,7 @@ order_resource_instance = OrderResource()
 api.add_resource(OrderResource, '/order', '/order/<int:order_id>')
 
 
-class OrderItemResource(Resource):
-
-    def get(self, order_item_id):
-        order_item = OrderItem.query.get(order_item_id)
-        if order_item_id:
-            if order_item:
-                return jsonify({
-                    'order_item_id': order_item.order_item_id,
-                    'order_id': order_item.order_id,
-                    'product_id': order_item.product_id,
-                    'quantity': order_item.quantity,
-                    'unit_price': order_item.unit_price,
-                    'item_amount': order_item.item_amount
-                })
-            else:
-                return jsonify({'message': 'Order item not found'}), 404
-        else:
-            order_items = OrderItem.query.all()
-            order_item_list = [{
-                'order_item_id': o.order_item_id,
-                'order_id': o.order_id,
-                'product_id': o.product_id,
-                'quantity': o.quantity,
-                'unit_price': o.unit_price,
-                'item_amount': o.item_amount
-            } for o in order_items]
-            return jsonify(order_item_list)
-
-
+order_item_resource_instance = OrderItemResource()
 api.add_resource(OrderItemResource, '/order_item',
                  '/order_item/<int:order_item_id>')
 
