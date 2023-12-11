@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from database import db, Product, Customer, Sale, SaleItem, User, Order, OrderItem
 from product_resource import ProductResource
 from customer_resource import CustomerResource
+from sale_resource import SaleResource
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
@@ -19,38 +20,7 @@ api.add_resource(ProductResource, '/product', '/product/<int:product_id>')
 customer_resource_instance = CustomerResource()
 api.add_resource(CustomerResource, '/customer', '/customer/<int:customer_id>')
 
-
-class SaleResource(Resource):
-
-    def get(self, sale_id=None):
-        if sale_id:
-            sale = Sale.query.get(sale_id)
-            if sale:
-                return jsonify({
-                    'sale_id': sale.sale_id,
-                    'customer_id': sale.customer_id,
-                    'product_id': sale.product_id,
-                    'sale_date': sale.sale_date,
-                    'total_amount': sale.total_amount,
-                    'payment_method': sale.payment_method,
-                    'notes': sale.notes
-                })
-            else:
-                return jsonify({'message': 'Sale not found'}), 404
-        else:
-            sales = Sale.query.all()
-            sale_list = [{
-                'sale_id': s.sale_id,
-                'customer_id': s.customer_id,
-                'product_id': s.product_id,
-                'sale_date': s.sale_date,
-                'total_amount': s.total_amount,
-                'payment_method': s.payment_method,
-                'notes': s.notes
-            } for s in sales]
-            return jsonify(sale_list)
-
-
+sale_resource_instance = SaleResource()
 api.add_resource(SaleResource, '/sale', '/sale/<int:sale_id>')
 
 
