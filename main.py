@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, render_template, url_for
-from flask_restful import Api, Resource, reqparse
-from werkzeug.security import generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
-from database import db, Product, Customer, Sale, SaleItem, User, Order, OrderItem
+from database import db
 from product_resource import ProductResource
 from customer_resource import CustomerResource
 from sale_resource import SaleResource
