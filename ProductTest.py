@@ -3,7 +3,6 @@ from flask import Flask
 from flask_restful import Api
 from flask_testing import TestCase
 from main import ProductResource, db
-from Product import ProductResource
 
 
 class ProductTest(TestCase):
