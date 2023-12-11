@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from database import db, Product, Customer, Sale, SaleItem, User, Order, OrderItem
 from product_resource import ProductResource
+from customer_resource import CustomerResource
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
@@ -15,8 +16,8 @@ db.init_app(app)
 product_resource_instance = ProductResource()
 api.add_resource(ProductResource, '/product', '/product/<int:product_id>')
 
-
-class CustomerResource(Resource):
+customer_resource_instance = CustomerResource()
+api.add_resource(CustomerResource, '/customer', '/customer/<int:customer_id>')
 
 
 class SaleResource(Resource):
