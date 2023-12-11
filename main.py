@@ -2,13 +2,13 @@ from flask import Flask, jsonify, render_template, url_for
 from flask_restful import Api
 from flask_sqlalchemy import SQLAlchemy
 from database import db
-from product_resource import ProductResource
-from customer_resource import CustomerResource
-from sale_resource import SaleResource
-from sale_item_resource import SaleItemResource
-from user_resource import UserResource
-from order_resource import OrderResource
-from order_item_resource import OrderItemResource
+from Product import ProductResource
+from Customer import CustomerResource
+from Sale import SaleResource
+from SaleItem import SaleItemResource
+from User import UserResource
+from Order import OrderResource
+from OrderItem import OrderItemResource
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"

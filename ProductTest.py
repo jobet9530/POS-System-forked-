@@ -2,8 +2,8 @@ import unittest
 from flask import Flask
 from flask_restful import Api
 from flask_testing import TestCase
-from main import ProductResource, Product, db
-from product_resource import ProductResource
+from main import ProductResource, db
+from Product import ProductResource
 
 
 class ProductTest(TestCase):
@@ -54,6 +54,7 @@ class ProductTest(TestCase):
             response.json['stock_quantity'], product_data['stock_quantity'])
         self.assertEqual(response.json['barcode'], product_data['barcode'])
         self.assertEqual(response.json['category'], product_data['category'])
+
 
 if __name__ == '__main__':
     unittest.main()
