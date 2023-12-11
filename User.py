@@ -1,6 +1,7 @@
 from flask import jsonify
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 from database import db, User
+from werkzeug.security import generate_password_hash
 
 
 class UserResource(Resource):
