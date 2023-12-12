@@ -8,5 +8,7 @@ COPY /test/app/tests /app/tests
 # Install the dependencies
 RUN pip install -r requirements.txt
 
+RUN python -m unittest discover /app/tests
+
 # Run the tests
 CMD ["python", "-m", "unittest", "discover", "-s", "app/tests", "app/tests", "-p", "test_*.py"]
