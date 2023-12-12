@@ -3,7 +3,7 @@ $(document).ready(function() {
     $.ajax({
       url: '/product',
       type: 'GET',
-      dataType: 'xml'
+      dataType: 'xml',
       success: function(data) {
           displayProducts(data);
       },
