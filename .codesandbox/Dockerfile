@@ -9,4 +9,4 @@ COPY /test/app/tests /app/tests
 RUN pip install -r requirements.txt
 
 # Run the tests
-CMD ["python", "-m", "unittest", "discover", "-s", "app/tests"]
+CMD ["python", "-m", "unittest", "discover", "-s", "app/tests", "app/tests", "-p", "test_*.py"]
