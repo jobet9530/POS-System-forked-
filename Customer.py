@@ -2,7 +2,8 @@ from flask import jsonify
 from flask_restful import Resource
 from database import db, Customer
 
-class Customer(Resource):
+
+class CustomerResource(Resource):
     def get(self, customer_id=None):
         if customer_id:
             customer = Customer.query.get(customer_id)
@@ -26,3 +27,14 @@ class Customer(Resource):
                 'address': c.customer_address
             } for c in customers]
             return jsonify(customer_list)
+
+    def post(self, customer_data):
+        customer = Customer(
+            customer_name=customer_data['customer_name'],
+            customer_address=customer_data['customer_address'],
+            customer_phone=customer_data['customer_phone'],
+            customer_email=customer_data['customer_email']
+        )
+        db.session.add(customer)
+        db.session.commit()
+        return jsonify({'message': 'Customer created successfully'})
