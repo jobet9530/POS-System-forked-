@@ -1,5 +1,6 @@
 import pytest
 from Customer import CustomerResource
+import coverage
 
 
 @pytest.fixture
