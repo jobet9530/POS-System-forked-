@@ -1,5 +1,6 @@
 FROM python:3.11.1
 
+RUN mkdir /app/tests
 # Copy the files required for testing
 COPY requirements.txt /app/requirements.txt
 COPY file.py /app/file.py
