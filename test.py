@@ -2,16 +2,8 @@ import pytest
 from Customer import CustomerResource
 import coverage
 
-@pytest.fixture(scope="session", autouse=True)
-def coverage_report(request):
-    cov = coverage.Coverage()
-    cov.start()
-    
-    yield
-    
-    cov.stop()
-    cov.save()
-    cov.report()
+cov = coverage.Coverage()
+cov.start()
 
 @pytest.fixture
 def customer():
@@ -54,3 +46,12 @@ def test_put_customer(customer):
     response = customer.put(customer_id=1, data=data)
     assert response.status_code == 200
     print("test_put_customer passed successfully!")
+
+cov.stop()
+cov.save()
+cov.combine()
+cov.report()
+
+percentage_coverage = cov.report()
+
+print(f"Code coverage: {percentage_coverage}%")
