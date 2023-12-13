@@ -6,8 +6,10 @@ COPY requirements.txt /app/requirements.txt
 COPY file.py /app/file.py
 COPY tests /app/tests
 
-RUN test -d tests && \ 
-    COPY tests /app/tests || \
+RUN test -e file.py && \ COPY file.py /app/file.py || \
+    echo "file.py does not exist"
+
+RUN test -d tests && \ COPY tests /app/tests || \
     echo "test directory does not exists"
 # Install the dependencies
 RUN pip install -r requirements.txt
