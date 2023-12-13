@@ -2,7 +2,8 @@ from flask import jsonify
 from flask_restful import Resource
 from database import db, Customer
 
-class Customer(Resource):
+
+class CustomerResource(Resource):
     def get(self, customer_id=None):
         if customer_id:
             customer = Customer.query.get(customer_id)
