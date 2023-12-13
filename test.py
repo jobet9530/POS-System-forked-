@@ -21,7 +21,6 @@ def test_get_customer(customer):
 
 
 def test_post_customer(customer):
-    response
     data = {
         "name": "Jane",
         "address": "456 Main St",
