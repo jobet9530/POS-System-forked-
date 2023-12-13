@@ -1,16 +1,14 @@
 from flask import jsonify
-from flask import Flask
-from flask_restful import Resource
+from flask_restful import Resource, fields, marshal_with
 from database import db, Customer
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///customers.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db.init_app(app)
-
-with app.app_context():
-    db.create_all()
-
+customer_fields = {
+    'customer_id': fields.String,
+    'customer_name': fields.String,
+    'customer_address': fields.String,
+    'customer_phone': fields.String,
+    'customer_email': fields.String
+}
 
 class CustomerResource(Resource):
     def get(self, customer_id=None):
@@ -32,11 +30,12 @@ class CustomerResource(Resource):
                 'customer_id': c.customer_id,
                 'customer_name': c.customer_name,
                 'email': c.customer_email,
-                'phone_address': c.customer_email,
+                'phone': c.customer_phone,
                 'address': c.customer_address
             } for c in customers]
             return jsonify(customer_list)
 
+    @marshal_with(customer_fields)
     def post(self, customer_data):
         customer = Customer(
             customer_name=customer_data['customer_name'],
@@ -46,8 +45,9 @@ class CustomerResource(Resource):
         )
         db.session.add(customer)
         db.session.commit()
-        return jsonify({'message': 'Customer created successfully'})
+        return customer, 201
 
+    @marshal_with(customer_fields)
     def put(self, customer_id, customer_data):
         customer = Customer.query.get(customer_id)
         if customer:
@@ -56,6 +56,6 @@ class CustomerResource(Resource):
             customer.customer_phone = customer_data['customer_phone']
             customer.customer_email = customer_data['customer_email']
             db.session.commit()
-            return jsonify({'message': 'Customer updated successfully'})
+            return customer
         else:
             return jsonify({'message': 'Customer not found'}), 404
