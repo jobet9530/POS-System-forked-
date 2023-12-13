@@ -1,6 +1,15 @@
 from flask import jsonify
+from flask import Flask
 from flask_restful import Resource
 from database import db, Customer
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///customers.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 
 class CustomerResource(Resource):
@@ -38,3 +47,15 @@ class CustomerResource(Resource):
         db.session.add(customer)
         db.session.commit()
         return jsonify({'message': 'Customer created successfully'})
+
+    def put(self, customer_id, customer_data):
+        customer = Customer.query.get(customer_id)
+        if customer:
+            customer.customer_name = customer_data['customer_name']
+            customer.customer_address = customer_data['customer_address']
+            customer.customer_phone = customer_data['customer_phone']
+            customer.customer_email = customer_data['customer_email']
+            db.session.commit()
+            return jsonify({'message': 'Customer updated successfully'})
+        else:
+            return jsonify({'message': 'Customer not found'}), 404

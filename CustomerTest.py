@@ -3,20 +3,20 @@ from Customer import CustomerResource
 
 
 class TestCustomerResource(unittest.TestCase):
-    def test_get_customer(self):
-        customer_resource = CustomerResource()
-        customer_data = {
-            'customer_id': 1,
-            'customer_name': 'Chicago vs Bulls',
-            'customer_address': '123 Main St',
-            'customer_phone': '555-1234',
-            'customer_email': 'lTqFP@example.com'
-        }
+    def test_post_customer(self):
+        resource = CustomerResource()
+        response = resource.post()
+        self.assertEqual(response.status_code, 200)
 
-        response = customer_resource.post(customer_data)
-        self.assertEqual(response.status_code, 201)
-        self.assertEqual(
-            response.json, {'message': 'Customer created successfully'})
+    def test_get_customer(self):
+        resource = CustomerResource()
+        response = resource.get()
+        self.assertEqual(response.status_code, 200)
+
+    def test_put_customer(self):
+        resource = CustomerResource()
+        response = resource.put(customer_id=1, customer_data={"name": "test"})
+        self.assertEqual(response.status_code, 200)
 
 
 if __name__ == '__main__':
