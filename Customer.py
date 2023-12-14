@@ -48,9 +48,9 @@ class CustomerResource(Resource):
             if customer.last_activity < five_months_ago:
                 customer.active = False
                 db.session.commit()
-                return jsonify({'message': 'Customer deleted successfully'})
-            db.session.delete(customer)
-            db.session.commit()
-            return jsonify({'message': 'Customer deleted successfully'})
+                return jsonify({'message': 'Customer temporarily deleted successfully'})
+            else:
+                return jsonify({'message': 'Customer cannot be deleted'})
+
         except Exception as e:
             return {'message': f'An error occurred: {e}'}, 500
