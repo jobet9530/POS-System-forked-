@@ -1,6 +1,6 @@
 import pytest
-import pluggy
 from Customer import CustomerResource
+from Warehouse import WarehouseResource
 import coverage
 
 cov = coverage.Coverage()
@@ -11,6 +11,49 @@ cov.start()
 def customer():
     resource = CustomerResource()
     return resource
+
+
+@pytest.fixture
+def warehouse():
+    resource = WarehouseResource()
+    return resource
+
+
+def test_get_warehouse(warehouse):
+    response = warehouse.get(warehouse_id=1)
+    assert response.status_code == 200
+    assert response.data == {
+        "id": 1,
+        "name": "Warehouse 1",
+        "address": "123 Main St",
+        "phone": "555-1234",
+        "email": "9yQpE@example.com",
+    }
+    print("test_get_warehouse passed successfully!")
+
+
+def test_post_warehouse(warehouse):
+    data = {
+        "name": "Warehouse 2",
+        "address": "456 Main St",
+        "phone": "555-5678",
+        "email": "9yQpE@example.com",
+    }
+    response = warehouse.post(data=data)
+    assert response.status_code == 201
+    print("test_post_warehouse passed successfully!")
+
+
+def test_put_warehouse(warehouse):
+    data = {
+        "name": "Warehouse 2",
+        "address": "456 Main St",
+        "phone": "555-5678",
+        "email": "9yQpE@example.com",
+    }
+    response = warehouse.put(warehouse_id=1, data=data)
+    assert response.status_code == 200
+    print("test_put_warehouse passed successfully!")
 
 
 def test_get_customer(customer):

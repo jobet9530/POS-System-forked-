@@ -109,6 +109,9 @@ class Warehouse(db.Model):
     try:
         warehouse_id = db.Column(db.Integer, primary_key=True)
         warehouse_name = db.Column(db.Text, nullable=False)
+        warehouse_address = db.Column(db.Text)
+        warehouse_phone_number = db.Column(db.Text)
+        warehouse_email = db.Column(db.Text)
     except Exception as e:
         print(f"Error in Warehouse class: {e}")
 
