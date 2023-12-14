@@ -52,7 +52,8 @@ def render_frontend():
     api_response = {'status': 'success', 'message': 'API data endpoint'}
     return render_template('index.html',
                            api_data=api_response,
-                           css_url=url_for('static', filename='style.css'))
+                           css_url=url_for('static', filename='style.css'),
+                           js_url=url_for('static', filename='script.js'))
 
 
 if __name__ == '__main__':
