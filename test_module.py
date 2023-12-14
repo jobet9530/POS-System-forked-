@@ -2,6 +2,7 @@ import pytest
 from Customer import CustomerResource
 from Warehouse import WarehouseResource
 import coverage
+from coverage.exceptions import NoDataError
 
 cov = coverage.Coverage()
 cov.start()
@@ -96,8 +97,13 @@ def test_put_customer(customer):
 cov.stop()
 cov.save()
 cov.combine()
-cov.report()
 
-percentage_coverage = cov.report()
-
-print(f"Code coverage: {percentage_coverage}%")
+try:
+    cov.load()
+    if not cov.get_data():
+        raise NoDataError("No data to report.")
+    cov.report()
+    percentage_coverage = cov.report()
+    print(f"Code coverage: {percentage_coverage}%")
+except NoDataError as e:
+    print(e)
