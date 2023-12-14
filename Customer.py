@@ -1,6 +1,6 @@
 from flask import jsonify, Flask
 from datetime import datetime, timedelta
-from flask_restful import Resource
+from flask_restful import Resource, request
 from database import db, Customer
 
 flask_app = Flask(__name__)
