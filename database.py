@@ -105,6 +105,27 @@ class OrderItem(db.Model):
         print(f"Error in OrderItem class: {e}")
 
 
+class Warehouse(db.Model):
+    try:
+        warehouse_id = db.Column(db.Integer, primary_key=True)
+        warehouse_name = db.Column(db.Text, nullable=False)
+    except Exception as e:
+        print(f"Error in Warehouse class: {e}")
+
+
+class WarehouseItem(db.Model):
+    try:
+        warehouse_item_id = db.Column(db.Integer, primary_key=True)
+        warehouse_id = db.Column(
+            db.Integer, db.ForeignKey('warehouse.warehouse_id'))
+        product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
+        quantity = db.Column(db.Integer, nullable=False)
+        warehouse = db.relationship('Warehouse', backref='items')
+        product = db.relationship('Product', backref='warehouses')
+    except Exception as e:
+        print(f"Error in WarehouseItem class: {e}")
+
+
 if __name__ == '__main__':
     db_file_path = 'POS.sqlite'
 
