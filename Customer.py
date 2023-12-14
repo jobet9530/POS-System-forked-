@@ -1,4 +1,5 @@
 from flask import jsonify, Flask
+from datetime import datetime, timedelta
 from flask_restful import Resource, fields, marshal_with, request
 from database import db, Customer
 
@@ -41,6 +42,13 @@ class CustomerResource(Resource):
     def delete(self, customer_id):
         try:
             customer = Customer.query.get(customer_id)
+
+            five_months_ago = datetime.now() - timedelta(days=150)
+
+            if customer.last_activity < five_months_ago:
+                customer.active = False
+                db.session.commit()
+                return jsonify({'message': 'Customer deleted successfully'})
             db.session.delete(customer)
             db.session.commit()
             return jsonify({'message': 'Customer deleted successfully'})
