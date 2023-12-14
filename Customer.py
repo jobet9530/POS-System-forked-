@@ -1,61 +1,48 @@
-from flask import jsonify
-from flask_restful import Resource, fields, marshal_with
+from flask import jsonify, Flask
+from flask_restful import Resource, fields, marshal_with, request
 from database import db, Customer
 
-customer_fields = {
-    'customer_id': fields.String,
-    'customer_name': fields.String,
-    'customer_address': fields.String,
-    'customer_phone': fields.String,
-    'customer_email': fields.String
-}
+flask_app = Flask(__name__)
+flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
+
 
 class CustomerResource(Resource):
     def get(self, customer_id=None):
-        if customer_id:
-            customer = Customer.query.get(customer_id)
-            if customer:
-                return jsonify({
-                    'customer_id': customer.customer_id,
-                    'customer_name': customer.customer_name,
-                    'customer_address': customer.customer_address,
-                    'customer_phone': customer.customer_phone,
-                    'customer_email': customer.customer_email
-                })
+        try:
+            if customer_id is None:
+                customers = Customer.query.all()
+                return jsonify([customer.to_dict() for customer in customers])
             else:
-                return jsonify({'message': 'Customer not found'}), 404
-        else:
-            customers = Customer.query.all()
-            customer_list = [{
-                'customer_id': c.customer_id,
-                'customer_name': c.customer_name,
-                'email': c.customer_email,
-                'phone': c.customer_phone,
-                'address': c.customer_address
-            } for c in customers]
-            return jsonify(customer_list)
+                customer = Customer.query.get(customer_id)
+                return jsonify(customer.to_dict())
+        except Exception as e:
+            return {'message': f'An error occurred: {e}'}, 500
 
-    @marshal_with(customer_fields)
-    def post(self, customer_data):
-        customer = Customer(
-            customer_name=customer_data['customer_name'],
-            customer_address=customer_data['customer_address'],
-            customer_phone=customer_data['customer_phone'],
-            customer_email=customer_data['customer_email']
-        )
-        db.session.add(customer)
-        db.session.commit()
-        return customer, 201
-
-    @marshal_with(customer_fields)
-    def put(self, customer_id, customer_data):
-        customer = Customer.query.get(customer_id)
-        if customer:
-            customer.customer_name = customer_data['customer_name']
-            customer.customer_address = customer_data['customer_address']
-            customer.customer_phone = customer_data['customer_phone']
-            customer.customer_email = customer_data['customer_email']
+    def post(self, customer_id=None):
+        try:
+            data = request.get_json()
+            customer = Customer(**data)
+            db.session.add(customer)
             db.session.commit()
-            return customer
-        else:
-            return jsonify({'message': 'Customer not found'}), 404
+            return jsonify(customer.to_dict())
+        except Exception as e:
+            return {'message': f'An error occurred: {e}'}, 500
+
+    def put(self, customer_id):
+        try:
+            data = request.get_json()
+            customer = Customer.query.get(customer_id)
+            customer.update(data)
+            db.session.commit()
+            return jsonify(customer.to_dict())
+        except Exception as e:
+            return {'message': f'An error occurred: {e}'}, 500
+
+    def delete(self, customer_id):
+        try:
+            customer = Customer.query.get(customer_id)
+            db.session.delete(customer)
+            db.session.commit()
+            return jsonify({'message': 'Customer deleted successfully'})
+        except Exception as e:
+            return {'message': f'An error occurred: {e}'}, 500
