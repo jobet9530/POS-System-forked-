@@ -70,6 +70,6 @@ class ProductResource(Resource):
             barcode_filename = ean.save(f"static/barcodes/{barcode_value}.png")
 
             return barcode_value
-        except:
+        except as Exception as e:
             print(f"Error generating barcode: {e}")
             return None
