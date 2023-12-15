@@ -2,12 +2,12 @@ FROM python:3.11.1
 
 COPY requirements.txt /app/requirements.txt
 
-COPY . .
+COPY . /app
 
-WORKDIR  /.codesandbox
+WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY . /app
 
 CMD ["python", "main.py", "test_module.py"]
