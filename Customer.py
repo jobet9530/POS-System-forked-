@@ -2,7 +2,6 @@ from flask import jsonify, Flask
 from datetime import datetime, timedelta
 from flask_restful import Resource, request
 from database import db, Customer
-from flask_sqlalchemy import SQLAlchemy
 
 flask_app = Flask(__name__)
 flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
