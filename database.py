@@ -133,6 +133,18 @@ class MonthlySales(db.Model):
     try:
         month = db.Column(db.Text, primary_key=True)
         sales = db.Column(db.Float, nullable=False)
+        profit = db.Column(db.Float, nullable=False)
+        revenue = db.Column(db.Float, nullable=False)
+        profit_margin = db.Column(db.Float, nullable=False)
+        revenue_growth = db.Column(db.Float, nullable=False)
+        profit_growth = db.Column(db.Float, nullable=False)
+        revenue_per_sale = db.Column(db.Float, nullable=False)
+        profit_per_sale = db.Column(db.Float, nullable=False)
+        revenue_per_customer = db.Column(db.Float, nullable=False)
+        profit_per_customer = db.Column(db.Float, nullable=False)
+        revenue_per_product = db.Column(db.Float, nullable=False)
+        profit_per_product = db.Column(db.Float, nullable=False)
+
     except Exception as e:
         print(f"Error in MonthlySales class: {e}")
 
