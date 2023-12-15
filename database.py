@@ -129,6 +129,14 @@ class WarehouseItem(db.Model):
         print(f"Error in WarehouseItem class: {e}")
 
 
+class MonthlySales(db.Model):
+    try:
+        month = db.Column(db.Text, primary_key=True)
+        sales = db.Column(db.Float, nullable=False)
+    except Exception as e:
+        print(f"Error in MonthlySales class: {e}")
+
+
 if __name__ == '__main__':
     db_file_path = 'POS.sqlite'
 
