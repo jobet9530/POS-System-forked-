@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from database import db, Product
 import barcode
 from barcode.writer import ImageWriter
+from datetime import datetime
 
 
 class ProductResource(Resource):
@@ -58,3 +59,17 @@ class ProductResource(Resource):
             return jsonify({'message': 'Product deleted successfully'})
         else:
             return jsonify({'message': 'Product not found'}), 404
+
+    def generate_unique_barcode(product_id):
+        try:
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            barcode_value = f"{product_id}-{timestamp}"
+
+            EAN = barcode.get_barcode_class('ean13')
+            ean = EAN(barcode_value, writer=ImageWriter())
+            barcode_filename = ean.save(f"static/barcodes/{barcode_value}.png")
+
+            return barcode_value
+        except:
+            print(f"Error generating barcode: {e}")
+            return None
