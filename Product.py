@@ -67,7 +67,7 @@ class ProductResource(Resource):
 
             EAN = barcode.get_barcode_class('ean13')
             ean = EAN(barcode_value, writer=ImageWriter())
-            barcode_filename = ean.save(f"static/barcodes/{barcode_value}.png")
+            ean.save(f"static/barcodes/{barcode_value}.png")
 
             return barcode_value
         except Exception as e:
