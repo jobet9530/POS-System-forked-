@@ -1,13 +1,19 @@
 FROM python:3.11.1
 
-COPY requirements.txt /app/requirements.txt
+# Set the working directory
+WORKDIR /app
 
+# Copy the requirements file
+COPY requirements.txt /app/
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application code
 COPY . .
 
-WORKDIR  /.codesandbox
+# Set the working directory for the application
+WORKDIR /app/.codesandbox
 
-RUN pip install -r requirements.txt
-
-COPY . .
-
+# CMD to run your application
 CMD ["python", "main.py", "test_module.py"]

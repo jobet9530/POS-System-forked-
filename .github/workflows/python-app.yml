@@ -34,6 +34,21 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
+    - name: Install missing modules
+      run: | 
+        missing_modules=$(pip freeze | grep -v -f <(pip freeze) <(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") | cut -d'=' -f1)
+        if [ ! -z "$missing_modules" ]; then
+          pip install $missing_modules
+        fi
+
+    - name: Lint with flake8
+      run: | 
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
     - name: Test with pytest
       run: |
         pytest
