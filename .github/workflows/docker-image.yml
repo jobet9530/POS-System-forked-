@@ -22,7 +22,7 @@ jobs:
         fi
 
     - name: Build the Docker image
-      run: docker build . -f .codesandbox/Dockerfiel -t vsc-pos-system-forked--b579f87c547ac1ddade3246682489ca69cb9c586d72ddc024d7939a45947ead5-features:$(date +%s)
+      run: docker build . -f .codesandbox/Dockerfile -t vsc-pos-system-forked--b579f87c547ac1ddade3246682489ca69cb9c586d72ddc024d7939a45947ead5-features:$(date +%s)
 
     - name: py-package-publish
       uses: mariamrf/py-package-publish-action@v1.1.0
