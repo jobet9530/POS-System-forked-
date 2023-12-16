@@ -17,6 +17,7 @@ jobs:
     - name: Install Python dependencies
       run: |
         if [ -f requirements.txt ]; then
+          pip install --upgrade pip
           pip install -r requirements.txt
         fi
 
