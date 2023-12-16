@@ -14,19 +14,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Install Python dependencies
+      run: |
+        if [ -f requirements.txt ]; then
+          pip install -r requirements.txt
+        fi
+
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
 
     - name: py-package-publish
-    - run: pip install -r requirements.txt
-    # You may pin to the exact commit or the version.
-    # uses: mariamrf/py-package-publish-action@6f9dbe7625b3eb881550e953f99b28d583add3f9
       uses: mariamrf/py-package-publish-action@v1.1.0
-        with:
-          # a Python version that is supported by pyenv.
-          python_version: 3.7.0
-          # the pip version to use (defaults to newest).
-          pip_version: latest
-          # if your setup.py (and therefore, your entire package) is in a subdirectory of your repo, put the path to it here.
-          subdir: # optional
-          
+      with:
+        python_version: 3.7.0
+        pip_version: latest
+        subdir: # optional
