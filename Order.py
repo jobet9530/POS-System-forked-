@@ -5,28 +5,36 @@ from database import db, Order
 
 class OrderResource(Resource):
 
-    def get(self, order_id=None):
-        if order_id:
-            order = Order.query.get(order_id)
-            if order:
-                return jsonify({
-                    'order_id': order.order_id,
-                    'customer_id': order.customer_id,
-                    'order_date': order.order_date,
-                    'total_amount': order.total_amount,
-                    'payment_method': order.payment_method,
-                    'notes': order.notes
-                })
-            else:
-                return jsonify({'message': 'Order not found'}), 404
-        else:
+    def get(self, order_id):
+        try:
             orders = Order.query.all()
-            order_list = [{
-                'order_id': o.order_id,
-                'customer_id': o.customer_id,
-                'order_date': o.order_date,
-                'total_amount': o.total_amount,
-                'payment_method': o.payment_method,
-                'notes': o.notes
-            } for o in orders]
-            return jsonify(order_list)
+            return jsonify([order.serialize() for order in orders])
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
+
+    def put(self):
+        try:
+            order = Order()
+            db.session.add(order)
+            db.session.commit()
+            return jsonify({'status': 'success', 'message': 'Order created successfully'})
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
+
+    def delete(self):
+        try:
+            order = Order.query.first()
+            db.session.delete(order)
+            db.session.commit()
+            return jsonify({'status': 'success', 'message': 'Order deleted successfully'})
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
+
+    def post(self):
+        try:
+            order = Order()
+            db.session.add(order)
+            db.session.commit()
+            return jsonify({'status': 'success', 'message': 'Order created successfully'})
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
