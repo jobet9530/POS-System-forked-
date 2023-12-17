@@ -151,7 +151,8 @@ class MonthlySales(db.Model):
 
 class InactiveAccount(db.Model):
     try:
-        user_id = db.Column(db.Integer, primary_key=True)
+        user_id = db.Column(db.Integer, db.ForeignKey(
+            '.user_id'), primary_key=True)
         username = db.Column(db.Text, nullable=False)
         email = db.Column(db.Text, nullable=False)
         password_hash = db.Column(db.Text, nullable=False)
