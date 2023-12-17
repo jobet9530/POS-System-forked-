@@ -3,7 +3,7 @@ FROM python:3.11.1
 WORKDIR /app
 
 # Copy only the requirements file initially
-COPY pos-system-forked/requirements.txt .
+COPY requirements.txt .
 
 # Create a virtual environment and install dependencies
 RUN python -m venv venv && . venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
