@@ -18,7 +18,7 @@ jobs:
         id: branch
         run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
       - name: Build the Docker Image
-        run: docker build -t pos:latest
+        run: docker build -t pos:latest .
         working-directory: .codesandbox
       - name: Push the Docker image
-        run: docker push pos:latest
+        run: docker push pos:latest .
