@@ -7,11 +7,11 @@ WORKDIR /app
 # Copy only the requirements file initially
 COPY requirements.txt .
 
-
+# Print the current directory and list the files for debugging
 RUN pwd && ls -la
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt || \ (pip freeze | cut -d = -f 1 | xargs -n 1 pip install --no-cache-dir -U)
+# Install dependencies, checking for missing modules
+RUN pip install --no-cache-dir -r requirements.txt || (pip freeze | cut -d = -f 1 | xargs -n 1 pip install --no-cache-dir -U)
 
 # Copy the rest of the application code
 COPY . .
