@@ -10,6 +10,12 @@ COPY ./requirements.txt .
 # Print the current directory and list the files for debugging
 RUN pwd && ls -la
 
+# Create virtual environment
+RUN python -m venv venv
+
+# Activate virtual environment
+RUN . venv/bin/activate
+
 # Install dependencies, checking for missing modules
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -20,4 +26,4 @@ COPY . .
 WORKDIR .codesandbox
 
 # CMD to run your application
-CMD ["python", "main.py", "test_module.py"]
+CMD ["/app/venv/bin/python", "main.py", "test_module.py"]
