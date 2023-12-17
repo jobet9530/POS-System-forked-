@@ -1,7 +1,7 @@
 from flask import jsonify, request
 from database import db, Customer, InactiveAccount
 from flask_restful import Resource
-from datetime import datetime, timedelt
+from datetime import datetime
 
 
 class CustomerResource(Resource):
