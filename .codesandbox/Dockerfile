@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy only the requirements file initially
 COPY requirements.txt .
 
+
+RUN pwd && ls -la
+
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 

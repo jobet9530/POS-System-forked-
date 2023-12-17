@@ -1,0 +1,22 @@
+# .dockerignore
+
+# Exclude build artifacts and temporary files
+.dockerignore
+.dockerignore.bak
+.dockerignore~
+
+# Exclude version control directories and files
+.git
+.gitignore
+
+# Exclude any files with the extension .pyc
+*.pyc
+
+# Exclude the virtual environment directory (if applicable)
+venv/
+
+# Exclude other files or directories as needed
+# ...
+
+# Exclude requirements.txt from the build context
+!requirements.txt
