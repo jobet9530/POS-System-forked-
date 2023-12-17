@@ -7,17 +7,12 @@ WORKDIR /app
 # Copy only the requirements file initially
 COPY ./requirements.txt .
 
-# Print the current directory and list the files for debugging
-RUN pwd && ls -la
-
 # Create virtual environment
 RUN python -m venv venv
 
 # Activate virtual environment
-RUN . venv/bin/activate && python main.py test_module.py
-
-# Install dependencies, checking for missing modules
-RUN pip install --no-cache-dir -r requirements.txt
+SHELL ["/bin/bash", "-c"]
+RUN source venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
 
 # Copy the rest of the application code
 COPY . .
