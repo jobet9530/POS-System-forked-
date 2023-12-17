@@ -5,7 +5,7 @@ FROM python:3.11.1
 WORKDIR /app
 
 # Copy only the requirements file initially
-COPY requirements.txt .
+COPY ./requirements.txt /app/
 
 # Print the current directory and list the files for debugging
 RUN pwd && ls -la
