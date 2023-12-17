@@ -21,4 +21,4 @@ jobs:
         run: docker build -t pos:latest .
         working-directory: .codesandbox
       - name: Push the Docker image
-        run: docker push pos:latest .
+        run: docker push pos:latest
