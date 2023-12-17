@@ -14,7 +14,7 @@ RUN pwd && ls -la
 RUN python -m venv venv
 
 # Activate virtual environment
-RUN . venv/bin/activate
+RUN . venv/bin/activate && python main.py test_module.py
 
 # Install dependencies, checking for missing modules
 RUN pip install --no-cache-dir -r requirements.txt
