@@ -2,8 +2,14 @@ FROM python:3.11.1
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy only the requirements file initially
+COPY requirements.txt .
 
+# Create a virtual environment and install dependencies
+RUN python -m venv venv && . venv/bin/activate && pip install --upgrade pip && pip install -r requirements.txt
+
+# Copy the rest of the application code
 COPY . .
 
-CMD ["python","main.py"]
+# CMD to run your application
+CMD ["python", "main.py"]
