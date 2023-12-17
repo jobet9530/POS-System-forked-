@@ -23,10 +23,8 @@ jobs:
       run: python -m venv venv
 
     - name: Activate virtual environment
-      run: source venv/bin/activate
-
-    - name: Install Python dependencies
       run: |
+        source venv/bin/activate
         if [ -f requirements.txt ]; then
           pip install --upgrade pip
           pip install -r requirements.txt
