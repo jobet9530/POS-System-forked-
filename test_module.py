@@ -94,6 +94,12 @@ def test_put_customer(customer):
     print("test_put_customer passed successfully!")
 
 
+def test_delete_customer(customer):
+    response = customer.delete(customer_id=1)
+    assert response.status_code == 200
+    print("test_delete_customer passed successfully!")
+
+
 cov.stop()
 cov.save()
 cov.combine()
