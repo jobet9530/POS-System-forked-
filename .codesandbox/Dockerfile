@@ -11,7 +11,7 @@ COPY requirements.txt .
 RUN pwd && ls -la
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt || \ (pip freeze | cut -d = -f 1 | xargs -n 1 pip install --no-cache-dir -U)
 
 # Copy the rest of the application code
 COPY . .
