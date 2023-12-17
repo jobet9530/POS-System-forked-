@@ -42,5 +42,4 @@ jobs:
       uses: mariamrf/py-package-publish-action@v1.1.0
       with:
         python_version: 3.7.0
-        pip_version: latest
         subdir: # optional
