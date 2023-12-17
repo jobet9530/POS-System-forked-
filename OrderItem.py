@@ -2,7 +2,6 @@ from flask import jsonify, request
 from flask_restful import Resource
 from database import db, OrderItem, Product
 
-
 class OrderItemResource(Resource):
 
     def get(self):

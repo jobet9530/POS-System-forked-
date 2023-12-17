@@ -149,6 +149,18 @@ class MonthlySales(db.Model):
         print(f"Error in MonthlySales class: {e}")
 
 
+class InactiveAccount(db.Model):
+    try:
+        user_id = db.Column(db.Integer, db.ForeignKey(
+            '.user_id'), primary_key=True)
+        username = db.Column(db.Text, nullable=False)
+        email = db.Column(db.Text, nullable=False)
+        password_hash = db.Column(db.Text, nullable=False)
+        role = db.Column(db.Text, default='user')
+    except Exception as e:
+        print(f"Error in InactiveAccount class: {e}")
+
+
 if __name__ == '__main__':
     db_file_path = 'POS.sqlite'
 
