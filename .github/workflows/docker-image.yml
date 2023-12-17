@@ -14,6 +14,17 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.7  # Use the version you need
+
+    - name: Create virtual environment
+      run: python -m venv venv
+
+    - name: Activate virtual environment
+      run: source venv/bin/activate
+
     - name: Install Python dependencies
       run: |
         if [ -f requirements.txt ]; then
