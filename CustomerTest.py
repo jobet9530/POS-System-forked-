@@ -57,6 +57,7 @@ class TestCustomerResource(unittest.TestCase):
     def test_put_customer(self):
         try:
             customer = Customer(
+                customer_id=1,
                 customer_name='test',
                 email='test',
                 address='test',
@@ -64,8 +65,12 @@ class TestCustomerResource(unittest.TestCase):
             )
             db.session.add(customer)
             db.session.commit()
-            customer = Customer.query.get(1)
-            self.assertEqual(customer.customer_name, 'test')
+
+            customer.customer_name = 'test'
+            db.session.commit()
+
+            updated_customer = Customer.query.get(customer_id)
+            self.assertEqual(updated_customer.customer_name, 'test')
         except Exception as e:
             print(e)
 
