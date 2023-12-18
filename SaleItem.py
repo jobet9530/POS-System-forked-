@@ -84,7 +84,6 @@ class SaleItemResource(Resource):
             sale_items = [{
                 'sale_item_id': sale_item[0].sale_item_id,
                 'sale_id': sale_item[0].sale_id,
-                'product_id': sale_item[0].product_id,
                 'product_name': sale_item[1].product_name,
                 'quantity': sale_item[0].quantity,
                 'price': sale_item[0].price
@@ -92,6 +91,7 @@ class SaleItemResource(Resource):
 
             db.session.delete(product)
             db.session.commit()
+
             return jsonify(sale_items)
         except Exception as e:
             return str(e)
