@@ -22,3 +22,33 @@ class UserResource(Resource):
 
         except Exception as e:
             return {'message': f'An error occurred: {e}'}, 500
+
+    def get(self):
+        try:
+            users = User.query.all()
+            users = [{
+                'user_id': user.user_id,
+                'username': user.username,
+                'email': user.email
+            }for user in users]
+
+            return jsonify(users)
+        except Exception as e:
+            return str(e)
+
+    def put(self):
+        try:
+            users = User.query.all()
+            users = [{
+                'user_id': user.user_id,
+                'username': user.username,
+                'email': user.email
+            }for user in users]
+
+            user = User(
+                username=request.json['username'],
+                email=request.json['email'],
+                password=generate_password_hash(request.json['password'])
+            )
+            db.session.add(user)
+            db.session.commit()
