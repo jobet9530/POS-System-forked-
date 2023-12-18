@@ -41,16 +41,20 @@ class WarehouseItemResource(Resource):
             product = Product(
                 product_name=request.json['product_name'],
                 price=request.json['price'],
-                stock_quantity=request.json['stock_quantity']
-                back
-
+                stock_quantity=request.json['stock_quantity'],
+                barcode=request.json['barcode'],
+                category=request.json['category']
             )
+            db.session.add(product)
+            db.session.commit()
             return jsonify(warehouse_item)
         except Exception as e:
             return jsonify({'error': str(e)})
 
     def put(self):
         try:
+            parser = reqparse.RequestParser()
+            parser.add_argument('warehouse_name', type=str, required=True, location='json', help='Missing warehouse name')
             warehouse_item = WarehouseItem.query(Warehouse, WarehouseItem, Product).join(
                 Product, WarehouseItem.product_id == Product.id).join(Warehouse, WarehouseItem.warehouse_id == Warehouse.id).join(Warehouse, WarehouseItem.warehouse_id == Warehouse.id).all()
             warehouse_item = [{

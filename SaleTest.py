@@ -24,8 +24,9 @@ class SaleTest(unittest.TestCase):
         except Exception as e:
             return {'message': f'An error occurred: {e}'}, 500
 
-    def calculate_total_price(self, quantity, price):
+    def calculate_total_price(quantity, price):
         return quantity * price
+
 
     def test_get_sale(self):
         try:
@@ -46,7 +47,8 @@ class SaleTest(unittest.TestCase):
             response = self.client.get('/sale')
             self.assertEqual(response.status_code, 200)
 
-            calculate_total_price = self.calculate_total_price(10, 10)
+            calculated_total_price = self.calculate_total_price(10, 10)
 
         except Exception as e:
-            return {'message': f'An error occurred: {e}'}, 500
+        return {'message': f'An error occurred: {e}'}, 500
+
