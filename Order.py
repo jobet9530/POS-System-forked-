@@ -1,32 +1,79 @@
-from flask import jsonify
+from flask import jsonify, request
 from flask_restful import Resource
-from database import db, Order
+from database import db, Order, Customer
 
 
 class OrderResource(Resource):
+    def get(self):
+        try:
+            orders = Order.query(Order, Customer).join(
+                Customer, Order.customer_id == Customer.customer_id).all()
+            orders = [{
+                'order_id': order[0].order_id,
+                'customer_id': order[0].customer_id,
+                'customer_name': order[1].customer_name,
+                'order_date': order[0].order_date,
+                'total_amount': order[0].total_amount
+            }for order in orders]
 
-    def get(self, order_id=None):
-        if order_id:
-            order = Order.query.get(order_id)
-            if order:
-                return jsonify({
-                    'order_id': order.order_id,
-                    'customer_id': order.customer_id,
-                    'order_date': order.order_date,
-                    'total_amount': order.total_amount,
-                    'payment_method': order.payment_method,
-                    'notes': order.notes
-                })
-            else:
-                return jsonify({'message': 'Order not found'}), 404
-        else:
-            orders = Order.query.all()
-            order_list = [{
-                'order_id': o.order_id,
-                'customer_id': o.customer_id,
-                'order_date': o.order_date,
-                'total_amount': o.total_amount,
-                'payment_method': o.payment_method,
-                'notes': o.notes
-            } for o in orders]
-            return jsonify(order_list)
+            return jsonify(orders)
+
+        except Exception as e:
+            return str(e)
+
+    def post(self):
+        try:
+            customer = []
+            orders = Order.query(Order, Customer).join(
+                Customer, Order.customer_id == Customer.customer_id).all()
+            orders = [{
+                'order_id': order[0].order_id,
+                'customer_id': order[0].customer_id,
+                'customer_name': order[1].customer_name,
+                'order_date': order[0].order_date,
+                'total_amount': order[0].total_amount
+            }for order in orders]
+
+            customer = Customer(
+                customer_name=request.json['customer_name'],
+                customer_address=request.json['customer_address'],
+                customer_email=request.json['customer_email'],
+                customer_phone=request.json['customer_phone']
+            )
+
+            db.session.add(customer)
+            db.session.commit()
+
+            return jsonify(orders)
+        except Exception as e:
+            return str(e)
+
+    def put(self):
+        try:
+            orders = Order.query(Order, Customer).join(
+                Customer, Order.customer_id == Customer.customer_id).all()
+            orders = [{
+                'order_id': order[0].order_id,
+                'customer_id': order[0].customer_id,
+                'customer_name': order[1].customer_name,
+                'order_date': order[0].order_date,
+                'total_amount': order[0].total_amount
+            }for order in orders]
+            return jsonify(orders)
+        except Exception as e:
+            return str(e)
+
+    def delete(self):
+        try:
+            orders = Order.query(Order, Customer).join(
+                Customer, Order.customer_id == Customer.customer_id).all()
+            orders = [{
+                'order_id': order[0].order_id,
+                'customer_id': order[0].customer_id,
+                'customer_name': order[1].customer_name,
+                'order_date': order[0].order_date,
+                'total_amount': order[0].total_amount
+            }for order in orders]
+            return jsonify(orders)
+        except Exception as e:
+            return str(e)
