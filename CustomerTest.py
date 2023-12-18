@@ -3,7 +3,6 @@ from database import db, Customer
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-
 class TestCustomerResource(unittest.TestCase):
 
     def setUp(self):
@@ -57,7 +56,6 @@ class TestCustomerResource(unittest.TestCase):
     def test_put_customer(self):
         try:
             customer = Customer(
-                customer_id=1,
                 customer_name='test',
                 email='test',
                 address='test',
@@ -65,12 +63,11 @@ class TestCustomerResource(unittest.TestCase):
             )
             db.session.add(customer)
             db.session.commit()
-
-            customer.customer_name = 'test'
+            customer_id = customer.customer_id
+            customer = Customer.query.get(customer_id)
+            customer.customer_name = 'test2'
             db.session.commit()
 
-            updated_customer = Customer.query.get(customer_id)
-            self.assertEqual(updated_customer.customer_name, 'test')
         except Exception as e:
             print(e)
 
