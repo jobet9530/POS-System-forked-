@@ -24,11 +24,19 @@ class SaleResource(Resource):
         except Exception as e:
             return str(e)
 
+    def calculate_total_price(self, quantity, price):
+        total_price = quantity * price
+        return total_price
+
     def post(self):
         try:
             sales = Sale.query(Sale, Customer, Product).join(
                 Customer, Sale.customer_id == Customer.customer_id).join(
                 Product, Sale.product_id == Product.product_id).all()
+            self.calculate_total_price(
+                request.json['quantity'],
+                request.json['price']
+            )
             sales = [{
                 'sale_id': sale[0].sale_id,
                 'customer_id': sale[0].customer_id,
@@ -56,6 +64,11 @@ class SaleResource(Resource):
             sales = Sale.query(Sale, Customer, Product).join(
                 Customer, Sale.customer_id == Customer.customer_id).join(
                 Product, Sale.product_id == Product.product_id).all()
+
+            self.calculate_total_price(
+                request.json['quantity'],
+                request.json['price']
+            )
             sales = [{
                 'sale_id': sale[0].sale_id,
                 'customer_id': sale[0].customer_id,
@@ -75,5 +88,15 @@ class SaleResource(Resource):
             )
             db.session.add(product)
             db.session.commit()
+
+            customer = Customer(
+                customer_name=request.json['customer_name'],
+                customer_address=request.json['customer_address'],
+                customer_email=request.json['customer_email'],
+                customer_phone=request.json['customer_phone']
+            )
+            db.session.add(customer)
+            db.session.commit()
+
         except Exception as e:
             return str(e)
