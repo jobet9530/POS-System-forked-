@@ -27,7 +27,6 @@ class SaleTest(unittest.TestCase):
     def calculate_total_price(quantity, price):
         return quantity * price
 
-
     def test_get_sale(self):
         try:
             customer = Customer(customer_name='Jobet')
@@ -51,4 +50,3 @@ class SaleTest(unittest.TestCase):
 
         except Exception as e:
         return {'message': f'An error occurred: {e}'}, 500
-
