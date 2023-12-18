@@ -3,6 +3,7 @@ from database import db, Customer
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
 class TestCustomerResource(unittest.TestCase):
 
     def setUp(self):
