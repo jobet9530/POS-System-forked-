@@ -65,6 +65,10 @@ class TestCustomerResource(unittest.TestCase):
             db.session.add(customer)
             db.session.commit()
             customer_id = customer.customer_id
+            customer = Customer.query.get(customer_id)
+            customer.customer_name = 'test2'
+            db.session.commit()
+
         except Exception as e:
             print(e)
 
