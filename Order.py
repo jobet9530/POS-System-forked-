@@ -2,8 +2,8 @@ from flask import jsonify, request
 from flask_restful import Resource
 from database import db, Order, Customer
 
-class OrderResource(Resource):
 
+class OrderResource(Resource):
     def get(self):
         try:
             orders = Order.query(Order, Customer).join(
