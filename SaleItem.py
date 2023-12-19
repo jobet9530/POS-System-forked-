@@ -4,7 +4,6 @@ from database import db, SaleItem, Product
 
 
 class SaleItemResource(Resource):
-
     def get(self):
         try:
             sale_items = SaleItem.query(SaleItem, Product).join(
@@ -18,9 +17,9 @@ class SaleItemResource(Resource):
                 'price': sale_item[0].price
             }for sale_item in sale_items]
 
-            return jsonify(sale_items)
+            return jsonify(sale_items), 200
         except Exception as e:
-            return str(e)
+            return str(e), 500
 
     def post(self):
         try:
@@ -46,9 +45,9 @@ class SaleItemResource(Resource):
             db.session.add(product)
             db.session.commit()
 
-            return jsonify(sale_items)
+            return jsonify(sale_items), 201
         except Exception as e:
-            return str(e)
+            return str(e), 500
 
     def put(self):
         try:
@@ -73,9 +72,10 @@ class SaleItemResource(Resource):
 
             db.session.add(product)
             db.session.commit()
-            return jsonify(sale_items)
+
+            return jsonify(sale_items), 201
         except Exception as e:
-            return str(e)
+            return str(e), 500
 
     def delete(self):
         try:
@@ -89,9 +89,17 @@ class SaleItemResource(Resource):
                 'price': sale_item[0].price
             }for sale_item in sale_items]
 
+            product = Product(
+                product_name=request.json['product_name'],
+                price=request.json['price'],
+                stock_quantity=request.json['stock_quantity'],
+                barcode=request.json['barcode'],
+                category=request.json['category']
+            )
+
             db.session.delete(product)
             db.session.commit()
 
-            return jsonify(sale_items)
+            return jsonify(sale_items), 200
         except Exception as e:
-            return str(e)
+            return str(e), 500
