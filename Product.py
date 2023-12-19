@@ -36,3 +36,49 @@ class ProductResource(Resource):
 
         except Exception as e:
             return str(e)
+
+    def put(self):
+        try:
+            product = Product.query(Product).all()
+            product = [{
+                'product_id': product[0].product_id,
+                'product_name': product[0].product_name,
+                'price': product[0].price,
+                'stock_quantity': product[0].stock_quantity,
+                'barcode': product[0].barcode,
+                'category': product[0].category
+            }for products in product]
+            return jsonify(product)
+        except Exception as e:
+            return str(e)
+
+    def delete(self):
+        try:
+            product_id = request.args.get('product_id')
+            product = Product.query.get(product_id)
+            if product:
+                db.session.delete(product)
+                db.session.commit()
+                return jsonify({'message': 'Product deleted successfully'})
+            else:
+                return jsonify({'message': 'Product not found'})
+        except Exception as e:
+            return str(e)
+
+    def get(self):
+        try:
+            products = Product.query.all()
+            product_list = []
+            for product in products:
+                product_data = {
+                    'product_id': product.product_id,
+                    'product_name': product.product_name,
+                    'price': product.price,
+                    'stock_quantity': product.stock_quantity,
+                    'barcode': product.barcode,
+                    'category': product.category
+                }
+                product_list.append(product_data)
+            return jsonify(product_list)
+        except Exception as e:
+            return str(e)
