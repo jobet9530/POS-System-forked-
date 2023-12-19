@@ -4,76 +4,69 @@ from database import db, Order, Customer
 
 
 class OrderResource(Resource):
+
     def get(self):
         try:
-            orders = Order.query(Order, Customer).join(
-                Customer, Order.customer_id == Customer.customer_id).all()
-            orders = [{
-                'order_id': order[0].order_id,
-                'customer_id': order[0].customer_id,
-                'customer_name': order[1].customer_name,
-                'order_date': order[0].order_date,
-                'total_amount': order[0].total_amount
-            }for order in orders]
-
-            return jsonify(orders)
-
+            customer_id = request.args.get('customer_id')
+            orders = db.session.query(Order).filter_by(
+                customer_id=customer_id).all()
+            result = []
+            for order in orders:
+                customer = Customer.query.get(order.customer_id)
+                result.append({
+                    'order_id': order.order_id,
+                    'customer_id': order.customer_id,
+                    'customer_name': customer.customer_name,
+                    'order_date': order.order_date
+                })
+                return jsonify(result), 200
         except Exception as e:
-            return str(e)
+            return jsonify({'message': f'An error occurred: {e}'}), 500
 
     def post(self):
         try:
-            customer = []
-            orders = Order.query(Order, Customer).join(
-                Customer, Order.customer_id == Customer.customer_id).all()
-            orders = [{
-                'order_id': order[0].order_id,
-                'customer_id': order[0].customer_id,
-                'customer_name': order[1].customer_name,
-                'order_date': order[0].order_date,
-                'total_amount': order[0].total_amount
-            }for order in orders]
-
-            customer = Customer(
-                customer_name=request.json['customer_name'],
-                customer_address=request.json['customer_address'],
-                customer_email=request.json['customer_email'],
-                customer_phone=request.json['customer_phone']
-            )
-
-            db.session.add(customer)
-            db.session.commit()
-
-            return jsonify(orders)
+            customer_id = request.json['customer_id']
+            orders = db.session.query(Order).filter_by(
+                customer_id=customer_id).all()
+            result = []
+            for order in orders:
+                customer = Customer.query.get(order.customer_id)
+                result.append({
+                    'order_id': order.order_id,
+                    'customer_id': order.customer_id,
+                    'customer_name': customer.customer_name,
+                    'order_date': order.order_date
+                })
+                return jsonify(result), 200
         except Exception as e:
-            return str(e)
+            return jsonify({'message': f'An error occurred: {e}'}), 500
 
     def put(self):
         try:
-            orders = Order.query(Order, Customer).join(
-                Customer, Order.customer_id == Customer.customer_id).all()
-            orders = [{
-                'order_id': order[0].order_id,
-                'customer_id': order[0].customer_id,
-                'customer_name': order[1].customer_name,
-                'order_date': order[0].order_date,
-                'total_amount': order[0].total_amount
-            }for order in orders]
-            return jsonify(orders)
+            customer_id = request.json['customer_id']
+            new_order_date = request.json['order_date']
+            order = Order.query.filter_by(customer_id=customer_id).first()
+
+            if order:
+                order.order_date = new_order_date
+                db.session.commit()
+                return jsonify({'message': 'Order updated successfully'}), 200
+            else:
+                return jsonify({'message': 'Order not found'}), 404
+
         except Exception as e:
-            return str(e)
+            return jsonify({'message': f'An error occurred: {e}'}), 500
 
     def delete(self):
         try:
-            orders = Order.query(Order, Customer).join(
-                Customer, Order.customer_id == Customer.customer_id).all()
-            orders = [{
-                'order_id': order[0].order_id,
-                'customer_id': order[0].customer_id,
-                'customer_name': order[1].customer_name,
-                'order_date': order[0].order_date,
-                'total_amount': order[0].total_amount
-            }for order in orders]
-            return jsonify(orders)
+            customer_id = request.json['customer_id']
+            order = Order.query.filter_by(customer_id=customer_id).first()
+
+            if order:
+                db.session.delete(order)
+                db.session.commit()
+                return jsonify({'message': 'Order deleted successfully'}), 200
+            else:
+                return jsonify({'message': 'Order not found'}), 404
         except Exception as e:
-            return str(e)
+            return jsonify({'message': f'An error occurred: {e}'}), 500

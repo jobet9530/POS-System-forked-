@@ -1,91 +1,60 @@
 from flask import jsonify, request
-from database import db, Customer, InactiveAccount
+from database import db, Customer
 from flask_restful import Resource
-from datetime import datetime
-
 
 class CustomerResource(Resource):
 
     def get(self):
         try:
-            customers = Customer.query(Customer).all()
-            customers = [{
-                'customer_id': customer[0].customer_id,
-                'customer_name': customer[0].customer_name,
-                'customer_address': customer[0].customer_address,
-                'customer_email': customer[0].customer_email,
-                'customer_phone': customer[0].customer_phone
-            }for customer in customers]
-
-            return jsonify(customers)
+            customer_id = request.args.get('customer_id')
+            if customer_id:
+                customer = Customer.query.get(customer_id)
+                if customer is None:
+                    return {'message': 'Customer not found'}, 404
+                return jsonify(customer.to_dict())
+            else:
+                return {'message': 'Customer ID not provided'}, 400
         except Exception as e:
-            return str(e)
+            return jsonify({'error': str(e)}), 500
 
     def post(self):
         try:
-            customers = Customer.query(Customer).all()
-            customers = [{
-                'customer_id': customer[0].customer_id,
-                'customer_name': customer[0].customer_name,
-                'customer_address': customer[0].customer_address,
-                'customer_email': customer[0].customer_email,
-                'customer_phone': customer[0].customer_phone
-            }for customer in customers]
-
+            data = request.get_json()
             customer = Customer(
-                customer_name=request.json['customer_name'],
-                customer_address=request.json['customer_address'],
-                customer_email=request.json['customer_email'],
-                customer_phone=request.json['customer_phone']
+                customer_name=data['customer_name'],
+                customer_address=data['customer_address'],
+                customer_phone_number=data['customer_phone_number'],
+                customer_email=data['customer_email']
             )
-
             db.session.add(customer)
             db.session.commit()
+            return jsonify(customer.to_dict()), 201
 
-            return jsonify(customers)
         except Exception as e:
-            return str(e)
+            return jsonify({'error': str(e)}), 500
 
     def put(self):
         try:
-            customers = Customer.query(Customer).all()
-            customers = [{
-                'customer_id': customer[0].customer_id,
-                'customer_name': customer[0].customer_name,
-                'customer_address': customer[0].customer_address,
-                'customer_email': customer[0].customer_email,
-                'customer_phone': customer[0].customer_phone
-            }for customer in customers]
+            data = request.get_json()
 
-            return jsonify(customers)
-        except Exception as e:
-            return str(e)
+            customer_id = data.get('customer_id')
 
-    def __init__(self, customer_name, customer_address, customer_email, customer_phone):
-        try:
-            self.customer_name = customer_name
-            self.customer_address = customer_address
-            self.customer_email = customer_email
-            self.customer_phone = customer_phone
-        except Exception as e:
-            return str(e)
+            if not customer_id:
+                return {'message': 'Customer ID not provided'}, 400
 
-    def update_activitiy(self):
-        try:
-            last_active_date = self.last_active_date()
-            current_date = datetime.now().date()
-            inactive_duration = current_date - last_active_date
+            customer = Customer.query.get(customer_id)
 
-            if inactive_duration.days >= 5 * 30:
-                self.is_active = False
-            else:
-                self.is_active = True
-            inactive_account = InactiveAccount(
-                customer_id=self.customer_id,
-                inactive_duration=inactive_duration
-            )
+            if not customer:
+                return {'message': 'Customer not found'}, 404
 
-            db.session.add(inactive_account)
+            customer.customer_name = data.get('customer_name')
+            customer.customer_address = data.get('customer_address')
+            customer.customer_phone_number = data.get('customer_phone_number')
+            customer.customer_email = data.get('customer_email')
+
             db.session.commit()
+
+            return jsonify(customer.to_dict()), 200
+
         except Exception as e:
-            return str(e)
+            return jsonify({'error': str(e)}), 500
