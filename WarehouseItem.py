@@ -1,5 +1,5 @@
-from flask import jsonify, request, parse
-from flask_restful import Resource, reqparse
+from flask import jsonify, request
+from flask_restful import Resource, reqparse, parse
 from database import db, Warehouse, WarehouseItem, Product
 
 
