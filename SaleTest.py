@@ -49,4 +49,4 @@ class SaleTest(unittest.TestCase):
             calculated_total_price = self.calculate_total_price(10, 10)
 
         except Exception as e:
-        return {'message': f'An error occurred: {e}'}, 500
+            return {'message': f'An error occurred: {e}'}, 500
