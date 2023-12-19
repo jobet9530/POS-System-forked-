@@ -23,34 +23,46 @@ class ProductResource(Resource):
 
     def post(self):
         try:
-            product = Product.query(Product).all()
-            product = [{
-                'product_id': product[0].product_id,
-                'product_name': product[0].product_name,
-                'price': product[0].price,
-                'stock_quantity': product[0].stock_quantity,
-                'barcode': product[0].barcode,
-                'category': product[0].category
-            }for products in product]
-            return jsonify(product)
+            product_name = request.json['product_name']
+            price = request.json['price']
+            stock_quantity = request.json['stock_quantity']
+            category = request.json['category']
 
+            new_product = Product(
+                product_name=product_name,
+                price=price,
+                stock_quantity=stock_quantity,
+                category=category
+            )
+            new_product.barcode = self.generate_unique_barcode(
+                new_product.product_id)
+            db.session.add(new_product)
+            db.session.commit()
+            return jsonify({'message': 'Product created successfully'})
         except Exception as e:
-            return str(e)
+            return jsonify({'message': str(e)})
 
     def put(self):
         try:
-            product = Product.query(Product).all()
-            product = [{
-                'product_id': product[0].product_id,
-                'product_name': product[0].product_name,
-                'price': product[0].price,
-                'stock_quantity': product[0].stock_quantity,
-                'barcode': product[0].barcode,
-                'category': product[0].category
-            }for products in product]
-            return jsonify(product)
+            product_id = request.args.get('product_id')
+            product = Product.query.get(product_id)
+
+            if product:
+                product.product_name = request.json['product_name']
+                product.price = request.json['price']
+                product.stock_quantity = request.json['stock_quantity']
+                product.category = request.json['category']
+
+                product.barcode = self.generate_unique_barcode(
+                    product.product_id)
+                db.session.commit()
+
+                return jsonify({'message': 'Product updated successfully'})
+            else:
+                return jsonify({'message': 'Product not found'})
+
         except Exception as e:
-            return str(e)
+            return jsonify({'message': str(e)})
 
     def delete(self):
         try:
@@ -63,7 +75,7 @@ class ProductResource(Resource):
             else:
                 return jsonify({'message': 'Product not found'})
         except Exception as e:
-            return str(e)
+            return jsonify({'message': str(e)})
 
     def get(self):
         try:
@@ -79,6 +91,6 @@ class ProductResource(Resource):
                     'category': product.category
                 }
                 product_list.append(product_data)
-            return jsonify(product_list)
+            return jsonify({'products': product_list})
         except Exception as e:
-            return str(e)
+            return jsonify({'message': str(e)})
