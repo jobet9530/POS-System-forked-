@@ -54,7 +54,8 @@ class WarehouseItemResource(Resource):
     def put(self):
         try:
             parser = reqparse.RequestParser()
-            parser.add_argument('warehouse_name', type=str, required=True, location='json', help='Missing warehouse name')
+            parser.add_argument('warehouse_name', type=str, required=True,
+                                location='json', help='Missing warehouse name')
             warehouse_item = WarehouseItem.query(Warehouse, WarehouseItem, Product).join(
                 Product, WarehouseItem.product_id == Product.id).join(Warehouse, WarehouseItem.warehouse_id == Warehouse.id).join(Warehouse, WarehouseItem.warehouse_id == Warehouse.id).all()
             warehouse_item = [{
