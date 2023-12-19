@@ -1,5 +1,5 @@
 import unittest
-from datebase import db, Sale, Product, Customer
+from database import db, Sale, Product, Customer
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
