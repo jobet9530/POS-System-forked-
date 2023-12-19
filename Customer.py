@@ -1,8 +1,6 @@
 from flask import jsonify, request
-from database import db, Customer, InactiveAccount
+from database import db, Customer
 from flask_restful import Resource
-from datetime import datetime
-
 
 class CustomerResource(Resource):
 
@@ -43,7 +41,7 @@ class CustomerResource(Resource):
 
             if not customer_id:
                 return {'message': 'Customer ID not provided'}, 400
-            
+
             customer = Customer.query.get(customer_id)
 
             if not customer:
@@ -57,4 +55,6 @@ class CustomerResource(Resource):
             db.session.commit()
 
             return jsonify(customer.to_dict()), 200
-        except
+
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
