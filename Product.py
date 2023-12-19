@@ -7,32 +7,34 @@ from datetime import datetime
 
 
 class ProductResource(Resource):
-    def generate_unique_barcode(product_id):
-        try:
-            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
-            barcode_value = f"{product_id}-{timestamp}"
-
-            EAN = barcode.get_barcode_class('ean13')
-            ean = EAN(barcode_value, writer=ImageWriter())
-            ean.save(f"static/barcodes/{barcode_value}.png")
-
-            return barcode_value
-        except Exception as e:
-            print(f"Error generating barcode: {e}")
-            return None
 
     def post(self):
         try:
-            product = Product.query(Product).all()
-            product = [{
-                'product_id': product[0].product_id,
-                'product_name': product[0].product_name,
-                'price': product[0].price,
-                'stock_quantity': product[0].stock_quantity,
-                'barcode': product[0].barcode,
-                'category': product[0].category
-            }for products in product]
-            return jsonify(product)
+            product = Product(
+                product_name=request.json['product_name'],
+                price=request.json['price'],
+                stock_quantity=request.json['stock_quantity'],
+                barcode=request.json['barcode'],
+                category=request.json['category']
+            )
+            db.session.add(product)
+            db.session.commit()
 
+        except Exception as e:
+            return str(e)
+
+    def get(self):
+        try:
+            products = Product.query.all()
+            products = [{
+                'product_id': product.product_id,
+                'product_name': product.product_name,
+                'price': product.price,
+                'stock_quantity': product.stock_quantity,
+                'barcode': product.barcode,
+                'category': product.category
+            }for product in products]
+
+            return jsonify(products)
         except Exception as e:
             return str(e)
