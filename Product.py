@@ -21,18 +21,18 @@ class ProductResource(Resource):
             print(f"Error generating barcode: {e}")
             return None
 
-    def post(self):
-        try:
-            product = Product.query(Product).all()
-            product = [{
-                'product_id': product[0].product_id,
-                'product_name': product[0].product_name,
-                'price': product[0].price,
-                'stock_quantity': product[0].stock_quantity,
-                'barcode': product[0].barcode,
-                'category': product[0].category
-            }for products in product]
-            return jsonify(product)
-
+     def post(self):
+         try:
+             product = Product.query(Product).all()
+             product_response = [{
+                'product_id': p.product_id,
+                'product_name': p.product_name,
+                'price': p.price,
+                'stock_quantity': p.stock_quantity,
+                'barcode': p.barcode,
+                'category': p.category
+            } for p in product]
+            return jsonify(product_response)
         except Exception as e:
             return str(e)
+
