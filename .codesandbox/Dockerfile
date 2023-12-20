@@ -2,10 +2,14 @@ FROM python:3.11.1
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY . /app
 
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip
 
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "main.py"]
+EXPOSE 80
+
+ENV NAME python
+
+CMD ["python","main.py"]

@@ -10,143 +10,131 @@ db = SQLAlchemy(app)
 
 
 class Product(db.Model):
-    try:
-        product_id = db.Column(db.Integer, primary_key=True)
-        product_name = db.Column(db.Text, nullable=False)
-        price = db.Column(db.Float, nullable=False)
-        stock_quantity = db.Column(db.Integer, nullable=False)
-        barcode = db.Column(db.Text, unique=True)
-        category = db.Column(db.Text)
-    except Exception as e:
-        print(f"Error in Product model: {e}")
+    product_id = db.Column(db.Integer, primary_key=True)
+    product_name = db.Column(db.Text, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    stock_quantity = db.Column(db.Integer, nullable=False)
+    barcode = db.Column(db.Text, unique=True)
+    category = db.Column(db.Text)
 
 
 class Customer(db.Model):
-    try:
-        customer_id = db.Column(db.Integer, primary_key=True)
-        customer_name = db.Column(db.Text, nullable=False)
-        email = db.Column(db.Text)
-        phone_number = db.Column(db.Text)
-        address = db.Column(db.Text)
-    except Exception as e:
-        print(f"Error in Customer model: {e}")
+    customer_id = db.Column(db.Integer, primary_key=True)
+    customer_name = db.Column(db.Text, nullable=False)
+    email = db.Column(db.Text)
+    phone_number = db.Column(db.Text)
+    address = db.Column(db.Text)
 
 
 class Sale(db.Model):
-    try:
-        sale_id = db.Column(db.Integer, primary_key=True)
-        customer_id = db.Column(
-            db.Integer, db.ForeignKey('customer.customer_id'))
-        product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
-        sale_date = db.Column(
-            db.TIMESTAMP, server_default=db.func.current_timestamp())
-        total_amount = db.Column(db.Float, nullable=False)
-        payment_method = db.Column(db.Text)
-        notes = db.Column(db.Text)
-        user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-        customer = db.relationship('Customer', backref='sales')
-        user = db.relationship('User', backref='sales')
-    except Exception as e:
-        print(f"Error in Sale class: {e}")
+    sale_id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
+    sale_date = db.Column(
+        db.TIMESTAMP, server_default=db.func.current_timestamp())
+    total_amount = db.Column(db.Float, nullable=False)
+    payment_method = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+    customer = db.relationship('Customer', backref='sales')
+    user = db.relationship('User', backref='sales')
 
 
 class SaleItem(db.Model):
-    try:
-        sale_item_id = db.Column(db.Integer, primary_key=True)
-        sale_id = db.Column(db.Integer, db.ForeignKey('sale.sale_id'))
-        product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
-        quantity = db.Column(db.Integer, nullable=False)
-        unit_price = db.Column(db.Float, nullable=False)
-        item_amount = db.Column(db.Float, nullable=False)
-        sale = db.relationship('Sale', backref='items')
-        product = db.relationship('Product', backref='sales')
-    except Exception as e:
-        print(f"Error in SaleItem class: {e}")
+    sale_item_id = db.Column(db.Integer, primary_key=True)
+    sale_id = db.Column(db.Integer, db.ForeignKey('sale.sale_id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
+    quantity = db.Column(db.Integer, nullable=False)
+    unit_price = db.Column(db.Float, nullable=False)
+    item_amount = db.Column(db.Float, nullable=False)
+    sale = db.relationship('Sale', backref='items')
+    product = db.relationship('Product', backref='sales')
 
 
 class User(db.Model):
-    try:
-        user_id = db.Column(db.Integer, primary_key=True)
-        username = db.Column(db.Text, nullable=False, unique=True)
-        password_hash = db.Column(db.Text, nullable=False)
-        role = db.Column(db.Text, default='user')
-    except Exception as e:
-        print(f"Error in User class: {e}")
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'))
+    customer_name = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.Text, nullable=False, unique=True)
+    password_hash = db.Column(db.Text, nullable=False)
+    role = db.Column(db.Text, default='user')
+    customer = db.relationship('Customer', backref='users')
 
 
 class Order(db.Model):
-    try:
-        order_id = db.Column(db.Integer, primary_key=True)
-        customer_id = db.Column(
-            db.Integer, db.ForeignKey('customer.customer_id'))
-        order_date = db.Column(
-            db.TIMESTAMP, server_default=db.func.current_timestamp())
-        total_amount = db.Column(db.Float, nullable=False)
-        payment_method = db.Column(db.Text)
-        notes = db.Column(db.Text)
-        user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-        customer = db.relationship('Customer', backref='orders')
-        user = db.relationship('User', backref='orders')
-    except Exception as e:
-        print(f"Error in Order class: {e}")
+    order_id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'))
+    order_date = db.Column(
+        db.TIMESTAMP, server_default=db.func.current_timestamp())
+    total_amount = db.Column(db.Float, nullable=False)
+    payment_method = db.Column(db.Text)
+    notes = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
+    customer = db.relationship('Customer', backref='orders')
+    user = db.relationship('User', backref='orders')
 
 
 class OrderItem(db.Model):
-    try:
-        order_item_id = db.Column(db.Integer, primary_key=True)
-        order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'))
-        product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
-        quantity = db.Column(db.Integer, nullable=False)
-        unit_price = db.Column(db.Float, nullable=False)
-        item_amount = db.Column(db.Float, nullable=False)
-        order = db.relationship('Order', backref='items')
-        product = db.relationship('Product', backref='orders')
-    except Exception as e:
-        print(f"Error in OrderItem class: {e}")
+    order_item_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
+    quantity = db.Column(db.Integer, nullable=False)
+    unit_price = db.Column(db.Float, nullable=False)
+    item_amount = db.Column(db.Float, nullable=False)
+    order = db.relationship('Order', backref='items')
+    product = db.relationship('Product', backref='orders')
 
 
 class Warehouse(db.Model):
-    try:
-        warehouse_id = db.Column(db.Integer, primary_key=True)
-        warehouse_name = db.Column(db.Text, nullable=False)
-        warehouse_address = db.Column(db.Text)
-        warehouse_phone_number = db.Column(db.Text)
-        warehouse_email = db.Column(db.Text)
-    except Exception as e:
-        print(f"Error in Warehouse class: {e}")
+    warehouse_id = db.Column(db.Integer, primary_key=True)
+    warehouse_name = db.Column(db.Text, nullable=False)
+    warehouse_address = db.Column(db.Text)
+    warehouse_phone_number = db.Column(db.Text)
+    warehouse_email = db.Column(db.Text)
 
 
 class WarehouseItem(db.Model):
-    try:
-        warehouse_item_id = db.Column(db.Integer, primary_key=True)
-        warehouse_id = db.Column(
-            db.Integer, db.ForeignKey('warehouse.warehouse_id'))
-        product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
-        quantity = db.Column(db.Integer, nullable=False)
-        warehouse = db.relationship('Warehouse', backref='items')
-        product = db.relationship('Product', backref='warehouses')
-    except Exception as e:
-        print(f"Error in WarehouseItem class: {e}")
+    warehouse_item_id = db.Column(db.Integer, primary_key=True)
+    warehouse_id = db.Column(
+        db.Integer, db.ForeignKey('warehouse.warehouse_id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'))
+    quantity = db.Column(db.Integer, nullable=False)
+    warehouse = db.relationship('Warehouse', backref='items')
+    product = db.relationship('Product', backref='warehouses')
 
 
 class MonthlySales(db.Model):
-    try:
-        month = db.Column(db.Text, primary_key=True)
-        sales = db.Column(db.Float, nullable=False)
-        profit = db.Column(db.Float, nullable=False)
-        revenue = db.Column(db.Float, nullable=False)
-        profit_margin = db.Column(db.Float, nullable=False)
-        revenue_growth = db.Column(db.Float, nullable=False)
-        profit_growth = db.Column(db.Float, nullable=False)
-        revenue_per_sale = db.Column(db.Float, nullable=False)
-        profit_per_sale = db.Column(db.Float, nullable=False)
-        revenue_per_customer = db.Column(db.Float, nullable=False)
-        profit_per_customer = db.Column(db.Float, nullable=False)
-        revenue_per_product = db.Column(db.Float, nullable=False)
-        profit_per_product = db.Column(db.Float, nullable=False)
+    month = db.Column(db.Text, primary_key=True)
+    sales = db.Column(db.Float, nullable=False)
+    profit = db.Column(db.Float, nullable=False)
+    revenue = db.Column(db.Float, nullable=False)
+    profit_margin = db.Column(db.Float, nullable=False)
+    revenue_growth = db.Column(db.Float, nullable=False)
+    profit_growth = db.Column(db.Float, nullable=False)
+    revenue_per_sale = db.Column(db.Float, nullable=False)
+    profit_per_sale = db.Column(db.Float, nullable=False)
+    revenue_per_customer = db.Column(db.Float, nullable=False)
+    profit_per_customer = db.Column(db.Float, nullable=False)
+    revenue_per_product = db.Column(db.Float, nullable=False)
+    profit_per_product = db.Column(db.Float, nullable=False)
 
-    except Exception as e:
-        print(f"Error in MonthlySales class: {e}")
+
+class InactiveAccount(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.user_id'), primary_key=True)
+    username = db.Column(db.Text, nullable=False)
+    email = db.Column(db.Text, nullable=False)
+    password_hash = db.Column(db.Text, nullable=False)
+    role = db.Column(db.Text, default='user')
+
+
+class Delivery(db.Model):
+    delivery_id = db.Column(db.Integer, primary_key=True)
+    delivery_date = db.Column(
+        db.TIMESTAMP, server_default=db.func.current_timestamp())
+    delivery_status = db.Column(db.Text)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.order_id'))
+    order = db.relationship('Order', backref='deliveries')
 
 
 if __name__ == '__main__':

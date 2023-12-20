@@ -1,56 +1,60 @@
-from flask import jsonify, Flask
-from datetime import datetime, timedelta
-from flask_restful import Resource, request
+from flask import jsonify, request
 from database import db, Customer
-
-flask_app = Flask(__name__)
-flask_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
-
+from flask_restful import Resource
 
 class CustomerResource(Resource):
-    def get(self, customer_id=None):
-        try:
-            if customer_id is None:
-                customers = Customer.query.all()
-                return jsonify([customer.to_dict() for customer in customers])
-            else:
-                customer = Customer.query.get(customer_id)
-                return jsonify(customer.to_dict())
-        except Exception as e:
-            return {'message': f'An error occurred: {e}'}, 500
 
-    def post(self, customer_id=None):
+    def get(self):
+        try:
+            customer_id = request.args.get('customer_id')
+            if customer_id:
+                customer = Customer.query.get(customer_id)
+                if customer is None:
+                    return {'message': 'Customer not found'}, 404
+                return jsonify(customer.to_dict())
+            else:
+                return {'message': 'Customer ID not provided'}, 400
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    def post(self):
         try:
             data = request.get_json()
-            customer = Customer(**data)
+            customer = Customer(
+                customer_name=data['customer_name'],
+                customer_address=data['customer_address'],
+                customer_phone_number=data['customer_phone_number'],
+                customer_email=data['customer_email']
+            )
             db.session.add(customer)
             db.session.commit()
-            return jsonify(customer.to_dict())
-        except Exception as e:
-            return {'message': f'An error occurred: {e}'}, 500
+            return jsonify(customer.to_dict()), 201
 
-    def put(self, customer_id):
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+    def put(self):
         try:
             data = request.get_json()
+
+            customer_id = data.get('customer_id')
+
+            if not customer_id:
+                return {'message': 'Customer ID not provided'}, 400
+
             customer = Customer.query.get(customer_id)
-            customer.update(data)
+
+            if not customer:
+                return {'message': 'Customer not found'}, 404
+
+            customer.customer_name = data.get('customer_name')
+            customer.customer_address = data.get('customer_address')
+            customer.customer_phone_number = data.get('customer_phone_number')
+            customer.customer_email = data.get('customer_email')
+
             db.session.commit()
-            return jsonify(customer.to_dict())
-        except Exception as e:
-            return {'message': f'An error occurred: {e}'}, 500
 
-    def delete(self, customer_id):
-        try:
-            customer = Customer.query.get(customer_id)
-
-            five_months_ago = datetime.now() - timedelta(days=150)
-
-            if customer.last_activity < five_months_ago:
-                customer.active = False
-                db.session.commit()
-                return jsonify({'message': 'Customer temporarily deleted successfully'})
-            else:
-                return jsonify({'message': 'Customer cannot be deleted'})
+            return jsonify(customer.to_dict()), 200
 
         except Exception as e:
-            return {'message': f'An error occurred: {e}'}, 500
+            return jsonify({'error': str(e)}), 500

@@ -1,5 +1,5 @@
-from flask import jsonify
-from flask_restful import Resource, reqparse
+from flask import jsonify, request
+from flask_restful import Resource
 from database import db, Product
 import barcode
 from barcode.writer import ImageWriter
@@ -7,59 +7,6 @@ from datetime import datetime
 
 
 class ProductResource(Resource):
-    def get(self, product_id=None):
-        if product_id:
-            product = Product.query.get(product_id)
-            if product:
-                return jsonify({
-                    'product_id': product.product_id,
-                    'product_name': product.product_name,
-                    'price': product.price,
-                    'stock_quantity': product.stock_quantity,
-                    'barcode': product.barcode,
-                    'category': product.category
-                })
-            else:
-                return jsonify({'message': 'Product not found'}), 404
-        else:
-            products = Product.query.all()
-            product_list = [{
-                'product_id': p.product_id,
-                'product_name': p.product_name,
-                'price': p.price,
-                'stock_quantity': p.stock_quantity,
-                'barcode': p.barcode,
-                'category': p.category
-            } for p in products]
-            return jsonify(product_list)
-
-    def put(self, product_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('product_name',
-                            type=str,
-                            required=True,
-                            help='Product name is required')
-
-        args = parser.parse_args()
-        new_product_name = args['product_name']
-
-        product = Product.query.get(product_id)
-        if product:
-            product.product_name = new_product_name
-            db.session.commit()
-            return jsonify({'message': 'Product updated successfully'})
-        else:
-            return jsonify({'message': 'Product not found'}), 404
-
-    def delete(self, product_id):
-        product = Product.query.get(product_id)
-        if product:
-            db.session.delete(product)
-            db.session.commit()
-            return jsonify({'message': 'Product deleted successfully'})
-        else:
-            return jsonify({'message': 'Product not found'}), 404
-
     def generate_unique_barcode(product_id):
         try:
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -73,3 +20,77 @@ class ProductResource(Resource):
         except Exception as e:
             print(f"Error generating barcode: {e}")
             return None
+
+    def post(self):
+        try:
+            product_name = request.json['product_name']
+            price = request.json['price']
+            stock_quantity = request.json['stock_quantity']
+            category = request.json['category']
+
+            new_product = Product(
+                product_name=product_name,
+                price=price,
+                stock_quantity=stock_quantity,
+                category=category
+            )
+            new_product.barcode = self.generate_unique_barcode(
+                new_product.product_id)
+            db.session.add(new_product)
+            db.session.commit()
+            return jsonify({'message': 'Product created successfully'})
+        except Exception as e:
+            return jsonify({'message': str(e)})
+
+    def put(self):
+        try:
+            product_id = request.args.get('product_id')
+            product = Product.query.get(product_id)
+
+            if product:
+                product.product_name = request.json['product_name']
+                product.price = request.json['price']
+                product.stock_quantity = request.json['stock_quantity']
+                product.category = request.json['category']
+
+                product.barcode = self.generate_unique_barcode(
+                    product.product_id)
+                db.session.commit()
+
+                return jsonify({'message': 'Product updated successfully'})
+            else:
+                return jsonify({'message': 'Product not found'})
+
+        except Exception as e:
+            return jsonify({'message': str(e)})
+
+    def delete(self):
+        try:
+            product_id = request.args.get('product_id')
+            product = Product.query.get(product_id)
+            if product:
+                db.session.delete(product)
+                db.session.commit()
+                return jsonify({'message': 'Product deleted successfully'})
+            else:
+                return jsonify({'message': 'Product not found'})
+        except Exception as e:
+            return jsonify({'message': str(e)})
+
+    def get(self):
+        try:
+            products = Product.query.all()
+            product_list = []
+            for product in products:
+                product_data = {
+                    'product_id': product.product_id,
+                    'product_name': product.product_name,
+                    'price': product.price,
+                    'stock_quantity': product.stock_quantity,
+                    'barcode': product.barcode,
+                    'category': product.category
+                }
+                product_list.append(product_data)
+            return jsonify({'products': product_list})
+        except Exception as e:
+            return jsonify({'message': str(e)})
