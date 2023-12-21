@@ -1,6 +1,7 @@
 Flask==2.2.5
 Werkzeug==2.2.2
 python-barcode==0.13.1
-flask_restful==0.3.9
+Flask-RESTful==0.3.10
 SQLAlchemy==1.4.23
 pytest==7.4.3
+coverage==7.3.2
