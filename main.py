@@ -4,7 +4,6 @@ from database import db, Product, Customer, Order, OrderItem, Warehouse, Warehou
 from flask_restful import Resource
 import barcode
 from barcode.writer import ImageWriter
-import qrcode
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
@@ -52,20 +51,53 @@ class ProductResource(Resource):
                 product_name=data['product_name'],
                 price=data['price'],
                 stock_quantity=data['stock_quantity'],
-                generated_barcode=data['barcode'],
+                generated_barcode=barcode(
+                    writer=ImageWriter(),
+                    data=data['barcode']
+                ),
                 category=data['category']
             )
             if new_product:
                 if not all(key in data for key in ['product_name', 'price', 'stock_quantity', 'barcode', 'category']):
                     return jsonify({'error': 'Missing required fields'}), 400
                 else:
-                    barcode_class = barcode.get_barcode_class('ean13')
                     generated_barcode = barcode(
                         data['barcode'], writer=barcode.writer.ImageWriter())
                     generated_barcode.save('barcode.png')
                     db.session.add(new_product)
                     db.session.commit()
                     return jsonify({'message': 'Product created successfully'}), 201
+        except Exception as e:
+            return jsonify({'message': str(e)}), 500
+        finally:
+            db.session.close()
+
+    @app.route('/product/<int:product_id>', methods=['PUT'])
+    def put(self, product_id):
+        try:
+            data = request.get_json()
+            product = Product.query.filter_by(product_id=product_id)
+
+            if not Product:
+                return jsonify({'message': 'Product not found'}), 404
+
+            if not all(key in data for key in ['product_name', 'price', 'stock_quantity', 'barcode', 'category']):
+                return jsonify({'error': 'Missing required fields'}), 400
+
+            if 'product_name' in data:
+                product.product_name = data['product_name']
+            if 'price' in data:
+                product.price = data['price']
+            if 'stock_quantity' in data:
+                product.stock_quantity = data['stock_quantity']
+            if 'barcode' in data:
+                product.barcode = data['barcode']
+            if 'category' in data:
+                product.category = data['category']
+
+            db.session.commit()
+            return jsonify({'message': 'Product updated successfully'}), 200
+
         except Exception as e:
             return jsonify({'message': str(e)}), 500
         finally:
