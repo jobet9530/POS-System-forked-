@@ -52,7 +52,7 @@ class ProductResource(Resource):
                 product_name=data['product_name'],
                 price=data['price'],
                 stock_quantity=data['stock_quantity'],
-                barcode=data['barcode'],
+                generated_barcode=data['barcode'],
                 category=data['category']
             )
             if new_product:
