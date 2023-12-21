@@ -1,63 +1,72 @@
-from flask import Flask, jsonify, render_template, url_for
-from flask_restful import Api
-from database import db
-from Product import ProductResource
-from Customer import CustomerResource
-from Sale import SaleResource
-from SaleItem import SaleItemResource
-from User import UserResource
-from Order import OrderResource
-from OrderItem import OrderItemResource
+from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
+from database import db, Product, Customer, Order, OrderItem, Warehouse, WarehouseItem
+from flask_restful import Resource
+import barcode
+from barcode.writer import ImageWriter
+import qrcode
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///POS.sqlite"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-api = Api(app)
-db.init_app(app)
-
-product_resource_instance = ProductResource()
-api.add_resource(ProductResource, '/product', '/product/<int:product_id>')
-
-customer_resource_instance = CustomerResource()
-api.add_resource(CustomerResource, '/customer', '/customer/<int:customer_id>')
-
-sale_resource_instance = SaleResource()
-api.add_resource(SaleResource, '/sale', '/sale/<int:sale_id>')
-
-sale_item_resource_instance = SaleItemResource()
-api.add_resource(SaleItemResource, '/sale_item',
-                 '/sale_item/<int:sale_item_id>')
-
-user_resource_instance = UserResource()
-api.add_resource(UserResource, '/user', '/user/<int:user_id>')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///POS.sqlite'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
-order_resource_instance = OrderResource()
-api.add_resource(OrderResource, '/order', '/order/<int:order_id>')
+class ProductResource(Resource):
+    @app.route('/product', methods=['GET'])
+    def get(self):
+        try:
+            category = request.args.get('category')
+            if category:
+                products = Product.query.filter_by(category=category).all()
+                if not products:
+                    return jsonify({'message': 'Products not found'}), 404
+                elif category is None:
+                    return jsonify({'message': 'Category is required'}), 400
+                else:
+                    result = []
+                    for product in products:
+                        result.append({
+                            'product_id': product.product_id,
+                            'product_name': product.product_name,
+                            'price': product.price,
+                            'stock_quantity': product.stock_quantity,
+                            'barcode': product.barcode,
+                            'category': product.category
+                        })
+                    return jsonify({'products': result, 'message': 'Products Retrieve successfully'}), 200
+        except Exception as e:
+            return jsonify({'message': str(e)}), 500
 
+    @app.route('/product', methods=['POST'])
+    def post(self):
+        try:
+            data = request.get_json()
+            if not all(key in data for key in ['product_name', 'price', 'stock_quantity', 'barcode', 'category']):
+                return jsonify({'error': 'Missing required fields'}), 400
+            existing_product = Product.query.filter_by(
+                barcode=data['barcode']).first()
+            if existing_product:
+                return jsonify({'error': 'Product already exists with same barcode'}), 400
 
-order_item_resource_instance = OrderItemResource()
-api.add_resource(OrderItemResource, '/order_item',
-                 '/order_item/<int:order_item_id>')
-
-
-@app.route('/api/data')
-def get_data():
-    data = {'status': 'success', 'message': 'Data fetched successfully'}
-    return jsonify(data)
-
-
-@app.route('/')
-def render_frontend():
-    api_response = {'status': 'success', 'message': 'API data endpoint'}
-    return render_template('index.html',
-                           api_data=api_response,
-                           css_url=url_for('static', filename='style.css'),
-                           js_url=url_for('static', filename='script.js'))
-
-
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-
-    app.run(host='0.0.0.0', port=5000, debug=True)
+            new_product = Product(
+                product_name=data['product_name'],
+                price=data['price'],
+                stock_quantity=data['stock_quantity'],
+                barcode=data['barcode'],
+                category=data['category']
+            )
+            if new_product:
+                if not all(key in data for key in ['product_name', 'price', 'stock_quantity', 'barcode', 'category']):
+                    return jsonify({'error': 'Missing required fields'}), 400
+                else:
+                    barcode_class = barcode.get_barcode_class('ean13')
+                    generated_barcode = barcode(
+                        data['barcode'], writer=barcode.writer.ImageWriter())
+                    generated_barcode.save('barcode.png')
+                    db.session.add(new_product)
+                    db.session.commit()
+                    return jsonify({'message': 'Product created successfully'}), 201
+        except Exception as e:
+            return jsonify({'message': str(e)}), 500
+        finally:
+            db.session.close()
