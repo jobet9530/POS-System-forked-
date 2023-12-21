@@ -102,3 +102,7 @@ class ProductResource(Resource):
             return jsonify({'message': str(e)}), 500
         finally:
             db.session.close()
+
+    @app.route('/product/<int:product_id>', methods=['DELETE'])
+    def delete(self, product_id):
+        try
