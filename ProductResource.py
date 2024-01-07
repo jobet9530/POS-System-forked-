@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
 from database import db, Product
 from flask_restful import Resource
 import barcode
