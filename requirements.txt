@@ -5,4 +5,3 @@ Flask-RESTful==0.3.10
 SQLAlchemy==1.4.23
 pytest==7.4.3
 coverage==7.3.2
-flask-sqlalchemy==1.4.23
